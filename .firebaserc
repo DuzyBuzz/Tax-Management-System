@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "tax-management-system-3ade2",
+    "prod": "tms-wvsu-pc"
+  },
+  "targets": {},
+  "etags": {}
+}
