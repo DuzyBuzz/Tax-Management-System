@@ -56,7 +56,6 @@ By default, the application will run on `http://localhost:4200/`. Open this URL 
 ### 4. Additional Information
 
 - **To stop the development server**: Press `Ctrl + C` in the terminal.
-- **To build the app for production**: Use the command `ng build --configuration production`.
 
 ---
 
