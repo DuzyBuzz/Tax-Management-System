@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-sidebar',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss'
 })

@@ -1,109 +1,105 @@
-<div class="container mx-auto p-6">
-  <h2 class="text-3xl font-bold text-blue-700 mb-6">📋 Your Tax Filings</h2>
-
-  <button (click)="openAddModal()" class="bg-blue-600 text-white px-5 py-3 rounded-lg shadow-md hover:bg-blue-700 transition-all">
-    ➕ Add New Filing
-  </button>
-
-  <div *ngIf="(taxFilings$ | async) as taxFilings; else noData" class="mt-6">
-    <table *ngIf="taxFilings.length > 0; else noData" class="w-full border-collapse shadow-lg rounded-lg overflow-hidden">
-      <thead class="bg-blue-600 text-white text-sm uppercase">
-        <tr>
-          <th class="px-6 py-4 text-left">📅 Year</th>
-          <th class="px-6 py-4 text-left">🏛️ Type</th>
-          <th class="px-6 py-4 text-left">💰 Amount (₱)</th>
-          <th class="px-6 py-4 text-left">🏢 Business Name</th>
-          <th class="px-6 py-4 text-left">📍 Address</th>
-          <th class="px-6 py-4 text-left">📞 Contact</th>
-          <th class="px-6 py-4 text-left">📜 Permit No.</th>
-          <th class="px-6 py-4 text-left">⚙️ Status</th>
-          <th class="px-6 py-4 text-left">⚙️ Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let tax of taxFilings" class="border-b bg-white hover:bg-gray-100 transition">
-          <td class="px-6 py-4 font-medium">{{ tax.taxYear }}</td>
-          <td class="px-6 py-4">{{ tax.businessType }}</td>
-          <td class="px-6 py-4 text-green-600 font-semibold">₱ {{ tax.amount | number:'1.2-2' }}</td>
-          <td class="px-6 py-4">{{ tax.businessName || '—' }}</td>
-          <td class="px-6 py-4">{{ tax.businessAddress || '—' }}</td>
-          <td class="px-6 py-4">{{ tax.contactNumber || '—' }}</td>
-          <td class="px-6 py-4">{{ tax.permitNo || '—' }}</td>
-          <td class="px-6 py-4">{{ tax.status }}</td>
-          <td class="px-6 py-4 flex gap-2">
-            <button (click)="openEditModal(tax)" class="bg-yellow-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-yellow-600 transition-all">
-              ✏️ Edit
-            </button>
-            <button (click)="deleteTaxFiling(tax.id!)" class="bg-red-500 text-white px-4 py-2 rounded-md shadow-md hover:bg-red-600 transition-all">
-              🗑️ Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl">
+  <!-- Header Section -->
+  <div class="flex justify-between items-center mb-6 border-b pb-4">
+    <h2 class="text-3xl font-semibold text-gray-800">Tax Filing Request</h2>
+    <button
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300 transform hover:scale-105"
+      (click)="openModal()"
+    >
+      <span class="text-lg">File New Tax Declaration Request</span>
+    </button>
   </div>
 
-  <ng-template #noData>
-    <p class="text-gray-500 text-center mt-6 text-lg">No tax filings found. 📝</p>
-  </ng-template>
+  <!-- No Data Message -->
+  <div *ngIf="taxFilings.length === 0" class="text-center text-gray-500 py-8">
+    <p class="text-xl">No tax filings have been submitted yet.</p>
+  </div>
 
-  <!-- Tax Filing Modal -->
-  <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96 animate-slide-in">
-      <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ isEditMode ? 'Edit Tax Filing' : 'Add Tax Filing' }}</h2>
+  <!-- Tax Filings List -->
+  <div *ngFor="let filing of taxFilings" class="bg-white shadow-lg rounded-xl p-6 mb-6 hover:shadow-xl transition duration-300">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-2xl font-semibold text-gray-800">{{ filing.businessName }}</h3>
+      <button
+        (click)="confirmDelete(filing.id)"
+        class="text-red-600 hover:text-red-700 font-semibold px-4 py-2 rounded-md border border-red-600 hover:bg-red-100 transition duration-300"
+      >
+        Delete
+      </button>
+    </div>
 
-      <div class="space-y-3">
-        <div>
-          <label class="block text-gray-700 font-medium">📅 Year</label>
-          <input [(ngModel)]="newTax.taxYear" type="number" placeholder="Enter Year"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
+    <div class="space-y-3 text-gray-700">
+      <p><strong>Business ID:</strong> {{ filing.businessId }}</p>
+      <p><strong>Full Name:</strong> {{ filing.fullName }}</p>
+      <p><strong>For Year:</strong> {{ filing.forYear }}</p>
+      <p><strong>Line of Business:</strong> {{ filing.lineOfBusiness }}</p>
+      <p><strong>Type of Business:</strong> {{ filing.typeOfBusiness }}</p>
+      <p><strong>No. of Employees:</strong> {{ filing.noOfEmployees }}</p>
+      <p><strong>Date Registered:</strong> {{ filing.dateRegistered || 'N/A' }}</p>
 
-        <div>
-          <label class="block text-gray-700 font-medium">🏛️ Tax Type</label>
-          <input [(ngModel)]="newTax.businessType" type="text" placeholder="Enter Tax Type"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
+      <p [ngClass]="{
+            'text-green-600': filing.status === 'Approved',
+            'text-yellow-600': filing.status === 'Pending',
+            'text-red-600': filing.status === 'Declined'
+          }"
+      >
+        <strong>Status:</strong>
+        <span [ngClass]="{
+            'bg-green-100': filing.status === 'Approved',
+            'bg-yellow-100': filing.status === 'Pending',
+            'bg-red-100': filing.status === 'Declined'
+          }"
+          class="px-2 py-1 rounded-full"
+        >
+          {{ filing.status || 'N/A' }}
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+<!-- Modal for New Tax Declaration -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
+  <div class="relative bg-white rounded-xl p-8 shadow-2xl ring-1 ring-gray-800 max-w-3xl w-full bg-cover overflow-y-auto max-h-[100vh]" style="background-image: url('assets/images/paper.jpg');">
+    <!-- Close Button (Top-right corner) -->
+    <button
+      (click)="closeModal()"
+      class="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full shadow-md"
+    >
+      ✖
+    </button>
 
-        <div>
-          <label class="block text-gray-700 font-medium">💰 Amount (₱)</label>
-          <input [(ngModel)]="newTax.amount" type="number" placeholder="Enter Amount"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">New Tax Declaration</h2>
+    <app-tax-filing-form [uid]="uid"></app-tax-filing-form>
+  </div>
+</div>
 
-        <div>
-          <label class="block text-gray-700 font-medium">🏢 Business Name (Optional)</label>
-          <input [(ngModel)]="newTax.businessName" type="text" placeholder="Enter Business Name"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
+<!-- Modal for Deleting All Tax Filings -->
+<div *ngIf="showDeleteConfirmation" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 overflow-auto">
+  <div class="relative bg-white rounded-xl p-8 shadow-2xl ring-1 ring-gray-800 max-w-3xl w-full bg-cover overflow-y-auto max-h-[100vh]" style="background-image: url('assets/images/paper.jpg');">
+    <!-- Close Button (Top-right corner) -->
+    <button
+      (click)="closeDeleteConfirmation()"
+      class="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700  px-3 py-1 rounded-full shadow-md"
+    >
+      ✖
+    </button>
 
-        <div>
-          <label class="block text-gray-700 font-medium">📍 Business Address (Optional)</label>
-          <input [(ngModel)]="newTax.businessAddress" type="text" placeholder="Enter Business Address"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Confirm Deletion</h2>
 
-        <div>
-          <label class="block text-gray-700 font-medium">📞 Contact Number (Optional)</label>
-          <input [(ngModel)]="newTax.contactNumber" type="tel" placeholder="Enter Contact Number"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
+    <p class="text-lg mb-6 text-gray-700">Are you sure you want to delete all tax filings? This action cannot be undone.</p>
 
-        <div>
-          <label class="block text-gray-700 font-medium">📜 Permit No. (Optional)</label>
-          <input [(ngModel)]="newTax.permitNo" type="text" placeholder="Enter Permit Number"
-            class="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none">
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 mt-6">
-        <button (click)="saveTaxFiling()" class="bg-green-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-green-700 transition">
-          💾 Save
-        </button>
-        <button (click)="closeModal()" class="bg-gray-500 text-white px-5 py-2 rounded-lg shadow-md hover:bg-gray-600 transition">
-          ❌ Cancel
-        </button>
-      </div>
+    <div class="flex justify-end gap-4">
+      <button
+        (click)="deleteAllFilings()"
+        class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300"
+      >
+        Delete All
+      </button>
+      <button
+        (click)="closeDeleteConfirmation()"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300"
+      >
+        Cancel
+      </button>
     </div>
   </div>
 </div>

@@ -2,21 +2,32 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { TaxFilingComponent } from './tax-filing/tax-filing.component';
+
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { DashboardComponent } from './dashboard/dashboard.component';
+
+import { TaxFilingComponent } from './tax-filing/tax-filing.component';
+import { AppointmentsComponent } from './appointments/appointments.component';
+import { TaxFilingFormComponent } from './tax-filing/tax-filing-form/tax-filing-form.component';
+
 
 @NgModule({
-  declarations: [TaxFilingComponent, DashboardComponent],
+  declarations: [
+    TaxFilingComponent,
+    AppointmentsComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     RouterModule,
     FullCalendarModule,
-    NgxChartsModule, // ✅ Import ngx-charts
+    TaxFilingFormComponent // if this is standalone, keep it here
   ],
-  exports: [TaxFilingComponent, DashboardComponent],
+  exports: [
+    TaxFilingComponent,
+    FullCalendarModule,
+    AppointmentsComponent
+  ],
 })
 export class PagesModule {}
+

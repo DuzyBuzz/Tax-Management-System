@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { TaxFilingService } from '../../services/tax-filing/tax-filing.service';
-import { TaxFiling } from '../../models/tax-filing.model';
+import { Firestore, collection, getDocs, deleteDoc, doc } from '@angular/fire/firestore';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({
@@ -11,122 +9,81 @@ import { AuthService } from '../../auth/auth.service';
   styleUrls: ['./tax-filing.component.scss'],
 })
 export class TaxFilingComponent implements OnInit {
-  taxFilings$!: Observable<TaxFiling[]>;
-  newTax: Partial<TaxFiling> = this.getEmptyTaxFiling();
-  isEditMode = false;
-  editingTaxId: string | null = null;
+  taxFilings: any[] = [];
+  showDeleteConfirmation = false;
+  uid: string | null = null;
   showModal = false;
-  userId: string | null = null;
 
-  constructor(
-    private taxService: TaxFilingService,
-    private authService: AuthService
-  ) {}
+  constructor(private firestore: Firestore, private authService: AuthService) {}
 
-  async ngOnInit() {
-    try {
-      this.userId = await this.authService.getCurrentUserId();
-      if (this.userId) {
-        this.taxFilings$ = this.taxService.getUserTaxFilings(this.userId);
-      }
-    } catch (error) {
-      console.error('Error fetching user ID:', error);
-      alert('Failed to retrieve user data. Please refresh and try again.');
+  ngOnInit(): void {
+    this.getCurrentUserId();
+  }
+
+  async getCurrentUserId() {
+    this.uid = await this.authService.getCurrentUserId();
+    if (this.uid) {
+      this.fetchTaxFilings(this.uid);
     }
   }
 
-  /** ✅ Get an empty tax filing object */
-  private getEmptyTaxFiling(): Partial<TaxFiling> {
-    return {
-      taxYear: new Date().getFullYear(),
-      businessType: '',
-      amount: 0,
-      businessName: '',
-      businessAddress: '',
-      contactNumber: '',
-      permitNo: '',
-      status: 'pending',
-    };
-  }
-
-/** ✅ Save or update tax filing */
-async saveTaxFiling() {
-  if (!this.newTax.taxYear || !this.newTax.businessType || !this.newTax.amount) {
-    alert('Please fill in all required fields.');
-    return;
-  }
-
-  if (!this.userId) {
-    alert('User not authenticated.');
-    return;
-  }
-
-  try {
-    const taxData: Omit<TaxFiling, 'id' | 'userId' | 'createdAt'> = {
-      taxYear: Number(this.newTax.taxYear),
-      businessType: this.newTax.businessType.trim(),
-      amount: Number(this.newTax.amount),
-      businessName: this.newTax.businessName?.trim() || '',
-      businessAddress: this.newTax.businessAddress?.trim() || '',
-      contactNumber: this.newTax.contactNumber?.trim() || '',
-      permitNo: this.newTax.permitNo?.trim() || '',
-      status: this.newTax.status || 'pending',
-    };
-
-    if (this.isEditMode && this.editingTaxId) {
-      // Update tax filing
-      await this.taxService.updateTaxFiling(this.editingTaxId, taxData);
-    } else {
-      // Add new tax filing
-      await this.taxService.addTaxFiling(taxData, this.userId);
-    }
-
-    this.closeModal();
-  } catch (error) {
-    console.error('Error saving tax filing:', error);
-    alert('Failed to save tax filing. Please try again.');
-  }
-}
-
-
-  /** ✅ Open edit modal */
-  openEditModal(tax: TaxFiling) {
-    this.newTax = { ...tax };
-    this.isEditMode = true;
-    this.editingTaxId = tax.id!;
+  openModal() {
+    // Open modal for filing new tax declaration request
     this.showModal = true;
   }
 
-  /** ✅ Open add modal */
-  openAddModal() {
-    this.newTax = this.getEmptyTaxFiling();
-    this.isEditMode = false;
-    this.editingTaxId = null;
-    this.showModal = true;
-  }
-
-  /** ✅ Close modal */
   closeModal() {
     this.showModal = false;
-    this.newTax = this.getEmptyTaxFiling();
-    this.isEditMode = false;
-    this.editingTaxId = null; // Ensure edit mode is reset
   }
 
-  /** ✅ Delete tax filing */
-  async deleteTaxFiling(id: string) {
-    if (!this.userId) {
-      alert('User not authenticated.');
-      return;
-    }
+  openDeleteConfirmation() {
+    this.showDeleteConfirmation = true;
+  }
 
-    if (confirm('Are you sure you want to delete this tax filing?')) {
-      try {
-        await this.taxService.deleteTaxFiling(id);
-      } catch (error) {
-        console.error('Error deleting tax filing:', error);
-        alert('Failed to delete tax filing. Please try again.');
+  closeDeleteConfirmation() {
+    this.showDeleteConfirmation = false;
+  }
+
+  async fetchTaxFilings(uid: string) {
+    const filingsRef = collection(this.firestore, 'taxFilings');
+    const snapshot = await getDocs(filingsRef);
+    this.taxFilings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  async deleteAllFilings() {
+    const filingsRef = collection(this.firestore, 'taxFilings');
+    const snapshot = await getDocs(filingsRef);
+
+    try {
+      for (const docSnapshot of snapshot.docs) {
+        const filingRef = doc(this.firestore, 'taxFilings', docSnapshot.id);
+        await deleteDoc(filingRef);
       }
+      this.taxFilings = [];  // Clear the local list after deletion
+      this.closeDeleteConfirmation();
+      alert('All tax filings have been deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting filings: ', error);
+      alert('Failed to delete the tax filings. Please try again later.');
+    }
+  }
+
+  confirmDelete(filingId: string) {
+    // Trigger the modal to confirm deletion of a single filing
+    if (confirm('Are you sure you want to delete this tax filing?')) {
+      this.deleteFiling(filingId);
+    }
+  }
+
+  async deleteFiling(filingId: string) {
+    try {
+      const filingRef = doc(this.firestore, 'taxFilings', filingId);
+      await deleteDoc(filingRef);
+      this.taxFilings = this.taxFilings.filter(filing => filing.id !== filingId);
+      alert('Tax filing deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting filing: ', error);
+      alert('Failed to delete the filing. Please try again later.');
     }
   }
 }

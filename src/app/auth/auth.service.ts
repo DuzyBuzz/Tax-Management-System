@@ -60,17 +60,19 @@ export class AuthService {
 
   // ✅ Logout
   logout(): Promise<void> {
-    this.loadingSubject.next(true); // Start loading
+    this.loadingSubject.next(true);
     return signOut(this.auth)
       .then(() => {
-        this.loadingSubject.next(false); // Stop loading
-        this.router.navigate(['/auth/login']);
+        this.loadingSubject.next(false);
+        // Force hard redirect to clear route stack
+        window.location.href = '/auth/login';
       })
       .catch(error => {
-        this.loadingSubject.next(false); // Stop loading
+        this.loadingSubject.next(false);
         throw this.handleAuthError(error);
       });
   }
+
 
   // ✅ Handle authentication error messages
   private handleAuthError(error: any): string {
@@ -80,11 +82,6 @@ export class AuthService {
       case 'auth/wrong-password': return "Incorrect password.";
       default: return error.message || "Authentication failed.";
     }
-  }
-
-  // ✅ Securely get Admin Email from environment
-  getAdminEmail(): string {
-    return environment.adminEmail;
   }
 
   // ✅ Get loading state as Observable

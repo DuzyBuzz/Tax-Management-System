@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
 .container {
   max-width: 1200px;
 }
@@ -25,3 +27,59 @@
   margin: auto;
 }
 
+#map {
+  height: 400px;
+  width: 100%;
+}
+/* Appointments Component Styles */
+.flex {
+  display: flex;
+}
+
+.p-4 {
+  padding: 1rem;
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.rounded-xl {
+  border-radius: 1rem;
+}
+
+.hover\:shadow-xl:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.transition {
+  transition: all 0.3s ease;
+}
+
+.text-gray-800 {
+  color: #2d3748;
+}
+
+.text-gray-500 {
+  color: #6b7280;
+}
+
+.text-green-600 {
+  color: #38a169;
+}
+
+.text-yellow-600 {
+  color: #d69e2e;
+}
+
+.text-red-600 {
+  color: #e53e3e;
+}
+
+.font-semibold {
+  font-weight: 600;
+}

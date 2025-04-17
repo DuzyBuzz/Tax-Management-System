@@ -1,27 +1,58 @@
-<!-- Mobile Navigation Toggle -->
-<button (click)="toggleMobileMenu()" class="fixed top-4 left-4 z-50 md:hidden bg-blue-600 text-white p-2 rounded-full shadow-lg">
-  📌
-</button>
+<!-- 🔥 Sidebar Container with Responsive Toggle and HammerJS Swipe -->
+<div class="relative w-full h-full overflow-hidden">
 
-<!-- Sidebar -->
-<div class="fixed left-0 top-0 h-full w-64 bg-white shadow-lg p-6 transform transition-transform duration-300 ease-in-out"
-     [ngClass]="{'-translate-x-full': !mobileMenuOpen, 'translate-x-0': mobileMenuOpen, 'md:translate-x-0': true}">
+  <!-- 📱 Mobile Toggle Button (Hamburger) -->
+  <button
+    (click)="toggleMobileMenu()"
+    class="fixed top-4 left-4 z-50 md:hidden bg-sky-300 text-white p-2 rounded-full shadow-lg"
+    aria-label="Toggle navigation"
+  >
+    <img src="assets/images/tax.png" alt="Menu Icon" class="w-6 h-6 object-contain" />
+  </button>
 
-  <h2 class="text-3xl font-black mb-6 text-gray-700 text-center">UMS</h2>
+  <!-- 🟤 Overlay (Mobile Only) -->
+  <div
+    *ngIf="mobileMenuOpen"
+    class="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+    (click)="toggleMobileMenu()"
+  ></div>
 
-  <nav class="flex flex-col space-y-3 cursor-pointer">
-    <button routerLink="/users/dashboard" routerLinkActive="active"
-      class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition">
-      Dashboard
-    </button>
+  <!-- 🧊 Sidebar Panel -->
+  <div
+    class="z-50 bg-slate-300 shadow-lg transform transition-transform duration-300 ease-in-out
+           fixed top-0 left-0 h-screen w-64 p-6 rounded-lg
+           md:sticky md:top-0 md:h-screen md:w-64 md:translate-x-0 md:shadow-none"
+    [ngClass]="{
+      '-translate-x-full': !mobileMenuOpen,
+      'translate-x-0': mobileMenuOpen
+    }"
+  >
 
-    <button routerLink="/users/tax-filing" routerLinkActive="active"
-      class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition">
-      Tax-Filing
-    </button>
+    <!-- 💎 Logo + App Name -->
+    <div class="flex flex-col items-center mb-6 space-y-2">
+      <img src="assets/images/tax.png" alt="PCRIM Logo"
+        class="w-12 h-12 object-contain rounded-full bg-sky-300 shadow-lg" />
+      <h2 class="text-3xl font-black text-yellow-700 drop-shadow">TMS</h2>
+    </div>
 
-    <button class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg transition">
-      Messages
-    </button>
-  </nav>
+    <!-- 📁 Navigation Links -->
+    <nav class="flex flex-col space-y-3 mt-4">
+      <a routerLink="/taxpayer/appointments"
+         routerLinkActive="bg-blue-100 font-semibold"
+         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
+        Appointments
+      </a>
+
+      <a routerLink="/taxpayer/tax-filing"
+         routerLinkActive="bg-blue-100 font-semibold"
+         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
+        Tax Filing
+      </a>
+
+      <button
+        class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
+        Messages
+      </button>
+    </nav>
+  </div>
 </div>

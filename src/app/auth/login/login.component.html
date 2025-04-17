@@ -1,57 +1,62 @@
-<div class="flex min-h-screen">
-  <!-- Left Side - Background Image Section -->
-  <div
-    class="relative flex flex-col items-center justify-center p-12 text-center text-white bg-cover bg-center w-5/6 hidden md:flex"
-    style="background-image: url('assets/images/tax bg.jpg');">
+<div class="min-h-screen grid grid-cols-1 md:grid-cols-2 bg-slate-100">
+  <!-- Left Panel -->
+  <div class="hidden md:flex items-center justify-center bg-cover bg-center" style="background-image: url('assets/images/tax bg.jpg');">
+
   </div>
 
-  <!-- Right Side - Login Form -->
-  <div class="w-full md:w-1/2 flex flex-col justify-center items-center p-12 bg-slate-100 shadow-lg">
-    <h2 class="text-5xl font-extrabold mb-6 text-yellow-600 drop-shadow-lg text-center">
-      Tax Management System
-    </h2>
+  <!-- Right Panel (Login) -->
+  <div class="flex flex-col justify-center items-center px-6 sm:px-16 py-12 bg-white shadow-xl">
+    <div class="w-full max-w-md space-y-8">
+      <div class=" p-10 rounded-xl max-w-lg  text-center backdrop-blur-sm">
+<h1 class="text-5xl font-extrabold text-yellow-400 mb-6 drop-shadow-md">Tax Management System</h1>
 
-    <p class="text-lg text-gray-700 leading-relaxed mb-6 text-center">
-      A powerful and secure tax management system designed to simplify tax filing,
-      ensure compliance, and streamline financial processes.
-    </p>
 
-    <h2 class="text-3xl font-bold mb-6">Welcome Back</h2>
-    <p class="text-gray-600 mb-6">Please enter your details</p>
+        <p class="text-lg leading-relaxed">
+          A secure and intelligent platform for effortless tax filing, compliance monitoring, and financial transparency.
+        </p>
+      </div>
+      <div class="text-center">
+        <h2 class="text-3xl font-bold text-slate-800">Welcome Back</h2>
+        <p class="mt-2 text-sm text-gray-500"></p>
+      </div>
 
-    <!-- Email Input -->
-    <input type="email" [(ngModel)]="email" placeholder="Email address"
-      class="border p-3 w-full rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500" />
 
-    <!-- Password Input -->
-    <input type="password" [(ngModel)]="password" placeholder="Password"
-      class="border p-3 w-full rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+      <!-- Loading Spinner -->
+      <div *ngIf="loading" class="text-center text-purple-600 font-semibold">Authenticating...</div>
 
-    <div *ngIf="loading" class="spinner">Loading...</div>
+      <!-- Divider -->
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="bg-white px-2 text-gray-500">Sign in to access your dashboard</span>
+        </div>
+      </div>
 
-    <!-- Login Form Submit Button -->
-    <button (click)="login()"
-      class="bg-purple-600 hover:bg-purple-700 transition-all text-white p-3 w-60 rounded-lg"
-      [disabled]="loading">
-      Sign In
-    </button>
+      <!-- Google Sign-In -->
+      <div>
+        <button (click)="loginWithGoogle()"
+          [disabled]="loading"
+          class="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition">
+          <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5 mr-2" alt="Google">
+          Sign in with Google
+        </button>
+      </div>
 
-    <!-- Google Sign-In Button -->
-    <div class="mt-4 w-full">
-      <button (click)="loginWithGoogle()"
-        class="border flex items-center justify-center p-3 w-full rounded-lg hover:bg-gray-200 transition-all"
-        [disabled]="loading">
-        <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5 h-5 mr-2" alt="Google"> Sign in with Google
-      </button>
-    </div>
+      <!-- Sign Up Prompt -->
+      <p class="text-sm text-center text-gray-500"
+      [routerLink]="['/taxpayers']" routerLinkActive="router-link-active" >
+        Don't have an account?
+        <a (click)="loginWithGoogle()" class="text-purple-600 hover:underline cursor-pointer">Sign up with Google</a>
+      </p>
 
-    <p class="text-sm text-gray-500 mt-4 cursor-pointer">
-      Don't have an account? <a (click)="loginWithGoogle()" class="text-purple-600 hover:underline">Sign up</a>
-    </p>
-
-    <!-- Forgot Password Link -->
-    <div class="flex justify-between w-full text-sm text-gray-500 mb-4">
-      <a href="https://myaccount.google.com/intro/signinoptions/password" class="text-purple-600 hover:underline">Forgot password?</a>
+      <!-- Forgot Password -->
+      <div class="text-center">
+        <a href="https://myaccount.google.com/intro/signinoptions/password" class="text-sm text-purple-600 hover:underline">
+          Forgot your password?
+        </a>
+      </div>
     </div>
   </div>
 </div>

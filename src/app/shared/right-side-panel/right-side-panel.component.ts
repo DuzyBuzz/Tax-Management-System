@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 export class RightSidePanelComponent{
   user$: Observable<User | null>; // Observable for user state
   dropdownOpen = false; // Controls dropdown visibility
+  navigating = false;
 
   constructor(private authService: AuthService) {
     this.user$ = this.authService.getCurrentUser(); // Subscribe to user data
@@ -22,7 +23,7 @@ export class RightSidePanelComponent{
   }
 
   logout() {
-    this.authService.logout();
+    this.authService.logout();      
   }
-  
+
 }
