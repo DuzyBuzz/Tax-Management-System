@@ -27,7 +27,6 @@ export class AppointmentsComponent implements OnInit {
 
   constructor(private firestore: Firestore) {}
   ngOnInit(): void {
-    this.initTaxFilings();
     this.setCalendarEvents();
     this.fetchTaxFilings();
   }

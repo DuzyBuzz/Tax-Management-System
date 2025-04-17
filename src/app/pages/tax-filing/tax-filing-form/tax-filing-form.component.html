@@ -1,6 +1,6 @@
 <h2 class="text-3xl font-bold mb-8 text-blue-700">📄 Tax Filing Form</h2>
 
-<form (submit)="submitForm()" class="space-y-10">
+<form class="space-y-10">
 
   <!-- Owner Information -->
   <section>
@@ -148,7 +148,7 @@
 
   <!-- Submit Button -->
   <div class="flex justify-center mt-8">
-    <button type="submit"
+    <button type="submit" (click)="submitForm()"
       class="px-8 py-3 bg-blue-700 text-white font-bold rounded-lg hover:bg-blue-800 focus:ring-4 focus:ring-blue-400 shadow-lg transition-all duration-150">
       🚀 Submit Filing
     </button>
