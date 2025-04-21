@@ -22,7 +22,7 @@ export class AuthService {
   getCurrentUser(): Observable<User | null> {
     return this.userSubject.asObservable();
   }
-
+ 
   // ✅ Get current user ID (optimized version)
   async getCurrentUserId(): Promise<string | null> {
     const currentUser = this.userSubject.value;

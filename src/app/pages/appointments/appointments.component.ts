@@ -2,6 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { collection, Firestore, getDocs } from '@angular/fire/firestore';
 import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
+import { query, where } from '@angular/fire/firestore';
+import { AuthService } from '../../auth/auth.service';
+
+
+
 
 interface TaxFiling {
   businessName: string;
@@ -25,7 +30,7 @@ export class AppointmentsComponent implements OnInit {
   taxFilings: TaxFiling[] = [];
 
 
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore, private authService: AuthService ) {}
   ngOnInit(): void {
     this.setCalendarEvents();
     this.fetchTaxFilings();
@@ -33,24 +38,50 @@ export class AppointmentsComponent implements OnInit {
     // Fetch tax filings from Firestore
     async fetchTaxFilings(): Promise<void> {
       try {
-        // Get reference to the taxFilings collection
+        // Step 1: Get current user UID
+        const uid = await this.authService.getCurrentUserId();
+        if (!uid) {
+          console.error('User is not logged in');
+          return;
+        }
+
+        // Step 2: Reference the "taxFilings" collection and filter by userUid
         const taxFilingsRef = collection(this.firestore, 'taxFilings');
+        const userQuery = query(taxFilingsRef, where('userUid', '==', uid));
 
-        // Get the documents from the collection
-        const querySnapshot = await getDocs(taxFilingsRef);
+        // Step 3: Get the filtered documents
+        const querySnapshot = await getDocs(userQuery);
 
-        // Convert the documents to an array
+        // Step 4: Map the results to the local array
         this.taxFilings = querySnapshot.docs.map((doc) => {
           const data = doc.data() as TaxFiling;
-          // Optional: include the document ID if needed
           return { ...data, id: doc.id };
         });
 
-        this.setCalendarEvents(); // Update calendar after fetching data
+        // Step 5: Calculate deadlines & update the calendar
+        this.computeDeadlines();       // Optional - only if you use deadlines/renewalStatus
+        this.setCalendarEvents();     // Refresh the calendar view
+
       } catch (error) {
         console.error('Error fetching tax filings: ', error);
       }
     }
+// Computes deadline and renewalStatus for each tax filing
+computeDeadlines(): void {
+  this.taxFilings.forEach((filing) => {
+    const deadlineDate = this.getDeadlineDate(filing.forYear, filing.type || 'Business');
+    filing.deadline = deadlineDate.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+
+    const today = new Date();
+    if (today > deadlineDate && filing.status !== 'Approved') {
+      filing.renewalStatus = 'Overdue';
+    } else if (today < deadlineDate) {
+      filing.renewalStatus = 'Upcoming';
+    } else {
+      filing.renewalStatus = 'Completed';
+    }
+  });
+}
 
   // Sample with deadlines and computed status
   initTaxFilings(): void {

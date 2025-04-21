@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Firestore, collection, getDocs, deleteDoc, doc } from '@angular/fire/firestore';
 import { AuthService } from '../../auth/auth.service';
+import { query, where } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-tax-filing',
@@ -45,9 +46,20 @@ export class TaxFilingComponent implements OnInit {
   }
 
   async fetchTaxFilings(uid: string) {
+    // Create a reference to the 'taxFilings' collection
     const filingsRef = collection(this.firestore, 'taxFilings');
-    const snapshot = await getDocs(filingsRef);
-    this.taxFilings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+    // Apply a query to only fetch documents where userUid == current user's UID
+    const userFilingsQuery = query(filingsRef, where('userUid', '==', uid));
+
+    // Get documents that match the query
+    const snapshot = await getDocs(userFilingsQuery);
+
+    // Map the document data into the component's local array
+    this.taxFilings = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
   }
 
   async deleteAllFilings() {

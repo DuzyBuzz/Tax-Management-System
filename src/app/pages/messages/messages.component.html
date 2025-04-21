@@ -1,0 +1,47 @@
+<div class="w-full max-w-md mx-auto h-[80vh] flex flex-col bg-white shadow-md rounded-lg overflow-hidden">
+  <!-- Header -->
+  <div class="bg-white border-b px-4 py-2 text-sm font-semibold text-gray-700 flex items-center">
+  </div>
+
+  <!-- Messages -->
+  <div id="chatWindow" class="flex-1 overflow-y-auto px-4 py-2 space-y-4 bg-[#f6f7f9]">
+    <ng-container *ngFor="let msg of messages$ | async">
+      <div class="flex items-end"
+           [ngClass]="{
+             'justify-end': msg.sender === currentUser?.email,
+             'justify-start': msg.sender !== currentUser?.email
+           }">
+        <img *ngIf="msg.sender !== currentUser?.email"
+             src='https://i.imgur.com/1X4VqBd.png'
+             class="w-6 h-6 rounded-full mr-2" />
+
+        <div
+          class="px-4 py-2 rounded-xl text-sm max-w-[70%]"
+          [ngClass]="{
+            'bg-blue-600 text-white rounded-br-none': msg.sender === currentUser?.email,
+            'bg-white text-gray-800 rounded-bl-none border': msg.sender !== currentUser?.email
+          }"
+        >
+          {{ msg.text }}
+        </div>
+
+        <img *ngIf="msg.sender === currentUser?.email"
+             src='https://i.imgur.com/1X4VqBd.png'
+             class="w-6 h-6 rounded-full ml-2" />
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Input -->
+  <form [formGroup]="form" (ngSubmit)="sendMessage()" class="flex items-center gap-2 p-2 border-t bg-white">
+    <input
+      type="text"
+      formControlName="text"
+      placeholder="Type a message..."
+      class="flex-1 px-4 py-2 border rounded-full text-sm focus:outline-none focus:ring"
+    />
+    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-full">
+      Send
+    </button>
+  </form>
+</div>

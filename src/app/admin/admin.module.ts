@@ -5,17 +5,23 @@ import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard
 import { AdminSidebarComponent } from './pages/admin-sidebar/admin-sidebar.component';
 import { RouterModule } from '@angular/router';
 import { adminRoutes } from './admin.routes';
+import { AdminTaxFilingComponent } from './pages/admin-tax-filing/admin-tax-filing.component';
+import { TaxFilingFormComponent } from '../pages/tax-filing/tax-filing-form/tax-filing-form.component';
 
 
 
 @NgModule({
-  declarations: [AdminComponent],
+  declarations: [AdminComponent, AdminTaxFilingComponent],
   imports: [
     RouterModule.forChild(adminRoutes),
     CommonModule,
     AdminDashboardComponent,
     AdminSidebarComponent,
-    RouterModule
+    RouterModule,
+    TaxFilingFormComponent
+  ],
+  exports: [
+    AdminTaxFilingComponent
   ]
 })
 export class AdminModule { }

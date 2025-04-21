@@ -1,0 +1,124 @@
+<div class="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-xl">
+  <!-- Header -->
+  <div class="flex flex-wrap justify-between items-center mb-6 border-b pb-4 gap-4">
+    <h2 class="text-3xl font-semibold text-gray-800">Tax Filing Requests</h2>
+    <div class="flex gap-4 flex-wrap">
+      <button
+        class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300 transform hover:scale-105"
+        (click)="openModal()"
+      >
+        File New Tax Declaration
+      </button>
+      <button
+        class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300 transform hover:scale-105"
+        (click)="openDeleteConfirmation()"
+      >
+        Delete All Filings
+      </button>
+    </div>
+  </div>
+
+  <!-- Empty Message -->
+  <div *ngIf="taxFilings.length === 0" class="text-center text-gray-500 py-16">
+    <svg class="mx-auto w-12 h-12 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M9 17v-6h6v6M12 12V9m0 0l-3 3m3-3l3 3"/>
+    </svg>
+    <p class="text-xl">No tax filings have been submitted yet.</p>
+  </div>
+
+  <!-- Filing List -->
+  <div *ngFor="let filing of taxFilings" class="bg-white shadow-lg rounded-xl p-6 mb-6 hover:shadow-xl transition duration-300">
+    <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+      <h3 class="text-2xl font-semibold text-gray-800">{{ filing.businessName }}</h3>
+      <div class="flex gap-2">
+        <button
+          *ngIf="filing.status !== 'Approved'"
+          (click)="approveFiling(filing.id)"
+          class="text-green-600 hover:text-white hover:bg-green-600 font-semibold px-4 py-2 rounded-md border border-green-600 transition duration-300"
+        >
+          Approve
+        </button>
+        <button
+          (click)="confirmDelete(filing.id)"
+          class="text-red-600 hover:text-white hover:bg-red-600 font-semibold px-4 py-2 rounded-md border border-red-600 transition duration-300"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+
+
+    <div class="space-y-2 text-gray-700 text-base">
+      <p><strong>Business ID:</strong> {{ filing.businessId }}</p>
+      <p><strong>Full Name:</strong> {{ filing.fullName }}</p>
+      <p><strong>For Year:</strong> {{ filing.forYear }}</p>
+      <p><strong>Line of Business:</strong> {{ filing.lineOfBusiness }}</p>
+      <p><strong>Type of Business:</strong> {{ filing.typeOfBusiness }}</p>
+      <p><strong>No. of Employees:</strong> {{ filing.noOfEmployees }}</p>
+      <p><strong>Date Registered:</strong> {{ filing.dateRegistered || 'N/A' }}</p>
+
+      <!-- Status badge -->
+      <p class="flex items-center gap-2">
+        <strong>Status:</strong>
+        <span
+          [ngClass]="{
+            'bg-green-100 text-green-700': filing.status === 'Approved',
+            'bg-yellow-100 text-yellow-700': filing.status === 'Pending',
+            'bg-red-100 text-red-700': filing.status === 'Declined'
+          }"
+          class="px-3 py-1 rounded-full font-medium text-sm"
+        >
+          {{ filing.status || 'N/A' }}
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- New Filing Modal -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="relative bg-white rounded-xl p-8 shadow-2xl ring-1 ring-gray-800 max-w-3xl w-full bg-cover max-h-[90vh] overflow-y-auto" >
+    <button
+      (click)="closeModal()"
+      class="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full shadow-md"
+    >
+      ✖
+    </button>
+
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">New Tax Declaration</h2>
+    <app-tax-filing-form
+    [uid]="uid"
+    ></app-tax-filing-form>
+  </div>
+</div>
+
+<!-- Delete All Confirmation Modal -->
+<div *ngIf="showDeleteConfirmation" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="relative bg-white rounded-xl p-8 shadow-2xl ring-1 ring-gray-800 max-w-3xl w-full bg-cover max-h-[90vh] overflow-y-auto" style="background-image: url('assets/images/paper.jpg');">
+    <button
+      (click)="closeDeleteConfirmation()"
+      class="absolute top-4 right-4 text-white bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full shadow-md"
+    >
+      ✖
+    </button>
+
+    <h2 class="text-2xl font-semibold mb-6 text-gray-800">Confirm Deletion</h2>
+    <p class="text-lg mb-6 text-gray-700">Are you sure you want to delete all tax filings? This action cannot be undone.</p>
+
+    <div class="flex justify-end gap-4">
+      <button
+        (click)="deleteAllFilings()"
+        class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300"
+      >
+        Delete All
+      </button>
+      <button
+        (click)="closeDeleteConfirmation()"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-md shadow-md transition duration-300"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
