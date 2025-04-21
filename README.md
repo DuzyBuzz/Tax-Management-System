@@ -84,6 +84,7 @@ If you encounter any other errors, please refer to the official Angular document
    ```bash
    git clone https://github.com/DuzyBuzz/Tax-Management-System.git
    cd Tax-Management-System
+   git checkout develop
    npm install
    ng serve
    ```
