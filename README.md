@@ -82,6 +82,9 @@ If you encounter any other errors, please refer to the official Angular document
 
 3. **Run the app**:
    ```bash
+   git clone https://github.com/DuzyBuzz/Tax-Management-System.git
+   cd Tax-Management-System
+   npm install
    ng serve
    ```
 
