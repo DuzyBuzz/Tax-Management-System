@@ -1,4 +1,4 @@
-### **README.md**
+ ### **README.md**
 
 ```markdown
 # Tax Management System
@@ -86,6 +86,7 @@ If you encounter any other errors, please refer to the official Angular document
    cd Tax-Management-System
    git checkout develop
    npm install
+   code .
    ng serve
    ```
 
