@@ -1,0 +1,40 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-2 mb-6">
+  <input formControlName="fullName" placeholder="Full Name" class="input" />
+  <input formControlName="email" placeholder="Email" class="input" />
+  <input formControlName="contactNumber" placeholder="Contact Number" class="input" />
+  <input formControlName="uid" placeholder="UID" class="input" />
+
+  <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+    {{ editingUserId ? 'Update User' : 'Add User' }}
+  </button>
+  <button type="button" *ngIf="editingUserId" (click)="cancelEdit()" class="ml-2 text-sm text-gray-500">
+    Cancel
+  </button>
+</form>
+
+<!-- Display user list -->
+<table class="w-full table-auto border">
+  <thead class="bg-gray-200">
+    <tr>
+      <th class="px-2 py-1">Full Name</th>
+      <th class="px-2 py-1">Email</th>
+      <th class="px-2 py-1">Contact</th>
+      <th class="px-2 py-1">UID</th>
+      <th class="px-2 py-1">Created</th>
+      <th class="px-2 py-1">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td class="border px-2 py-1">{{ user.fullName }}</td>
+      <td class="border px-2 py-1">{{ user.email }}</td>
+      <td class="border px-2 py-1">{{ user.contactNumber }}</td>
+      <td class="border px-2 py-1">{{ user.uid }}</td>
+      <td class="border px-2 py-1">{{ user.createdAt?.toDate() | date: 'short' }}</td>
+      <td class="border px-2 py-1 space-x-1">
+        <button (click)="editUser(user)" class="text-blue-600 text-sm">Edit</button>
+        <button (click)="deleteUser(user.id)" class="text-red-600 text-sm">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

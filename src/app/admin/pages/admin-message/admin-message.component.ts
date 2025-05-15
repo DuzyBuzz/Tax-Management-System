@@ -20,12 +20,12 @@ import { Auth, user } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 
 @Component({
-  selector: 'app-messages',
-  templateUrl: './messages.component.html',
-  styleUrls: ['./messages.component.scss'],
+  selector: 'app-admin-message',
+  templateUrl: './admin-message.component.html',
+  styleUrl: './admin-message.component.scss',
   standalone: false
 })
-export class MessagesComponent implements OnInit, AfterViewInit {
+export class AdminMessageComponent implements OnInit, AfterViewInit {
   // Firebase services
   private firestore = inject(Firestore);
   private auth = inject(Auth);

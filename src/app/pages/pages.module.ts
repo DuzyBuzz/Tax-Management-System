@@ -8,12 +8,14 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import { TaxFilingComponent } from './tax-filing/tax-filing.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { TaxFilingFormComponent } from './tax-filing/tax-filing-form/tax-filing-form.component';
+import { MessagesComponent } from './messages/messages.component';
 
 
 @NgModule({
   declarations: [
     TaxFilingComponent,
-    AppointmentsComponent
+    AppointmentsComponent,
+    MessagesComponent
   ],
   imports: [
     CommonModule,
@@ -26,7 +28,9 @@ import { TaxFilingFormComponent } from './tax-filing/tax-filing-form/tax-filing-
   exports: [
     TaxFilingComponent,
     FullCalendarModule,
-    AppointmentsComponent
+    AppointmentsComponent,
+    MessagesComponent
+
   ],
 })
 export class PagesModule {}
