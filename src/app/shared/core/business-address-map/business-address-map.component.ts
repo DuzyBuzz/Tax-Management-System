@@ -7,6 +7,7 @@ import * as L from 'leaflet';
 })
 export class BusinessAddressMapComponent implements AfterViewInit {
   @Output() addressSelected = new EventEmitter<string>();
+  @Output() close = new EventEmitter<void>(); // Add this line
   map: any;
   marker: any;
 
@@ -15,7 +16,7 @@ export class BusinessAddressMapComponent implements AfterViewInit {
   }
 
   initMap(): void {
-    this.map = L.map('map').setView([14.5995, 120.9842], 13); // Default Manila location
+    this.map = L.map('map').setView([10.9407, 122.6414], 13); // Pototan, Iloilo
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(this.map);
@@ -30,11 +31,13 @@ export class BusinessAddressMapComponent implements AfterViewInit {
 
       this.marker = L.marker([lat, lng]).addTo(this.map);
 
-      // Reverse geocoding using Nominatim
+      // Reverse geocoding
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
       const data = await response.json();
       const address = data.display_name;
+
       this.addressSelected.emit(address);
+      this.close.emit(); // Close modal after selecting address ✅
     });
   }
 }

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Firestore, collection, getDocs, deleteDoc, doc, updateDoc  } from '@angular/fire/firestore';
 import { AuthService } from '../../../auth/auth.service';
+import { HttpClient } from '@angular/common/http';
+import emailjs from 'emailjs-com';
+
 
 @Component({
   selector: 'app-admin-tax-filing',
@@ -13,6 +16,8 @@ export class AdminTaxFilingComponent implements OnInit {
   showDeleteConfirmation = false;     // Controls the "Delete All" confirmation modal
   showModal = false;                  // Controls the new filing modal
   uid: string = 'BqQ201IVDTa8tFPqGqEi8txeUrn1';
+  toast: any;
+  http: any;
 
   constructor(private firestore: Firestore, private authService: AuthService) {}
 
@@ -104,4 +109,55 @@ async approveFiling(filingId: string) {
       alert('Failed to delete the filing. Please try again later.');
     }
   }
+async sendPayment(filing: any) {
+  try {
+    if (!filing.email || !filing.businessId) {
+      alert('Email or Business ID is missing.');
+      return;
+    }
+
+    // Step 1: Update status in Firestore
+    const filingRef = doc(this.firestore, 'taxFilings', filing.id);
+    await updateDoc(filingRef, { status: 'Payment Sent' });
+
+    // Step 2: Prepare email template parameters
+    const templateParams = {
+      filing_id: filing.id || 'N/A',
+      taxpayer_name: filing.fullName || 'Taxpayer',
+      business_name: filing.businessName,
+      icon_url: filing.iconUrl || 'https://example.com/default-icon.png', // fallback icon URL
+      tax_type: filing.typeOfBusiness || 'N/A',
+      filing_date: filing.filingDate || new Date().toLocaleDateString(),
+      amount: filing.amount?.toFixed(2) || '599.00',
+      fees: {
+        processing: filing.processingFee?.toFixed(2) || '5.00',
+        penalty: filing.penaltyFee?.toFixed(2) || '0.00',
+        total: filing.totalFee?.toFixed(2) || filing.amount?.toFixed(2) || '604.00',
+      },
+      gcash_reference: filing.gcashReference || '9876543210',
+      email: filing.email,
+    };
+
+    // Your EmailJS config
+    const serviceID = 'service_dro2x6u';
+    const templateID = 'template_pbxkodg';
+    const userID = 'cmIntxTGbG_lnpbiq';
+
+    // Step 3: Send email
+    await emailjs.send(serviceID, templateID, templateParams, userID);
+
+    alert('Payment instructions sent successfully.');
+
+    // Update local status list
+    this.taxFilings = this.taxFilings.map(f =>
+      f.id === filing.id ? { ...f, status: 'Payment Sent' } : f
+    );
+  } catch (error) {
+    console.error('Error sending payment email:', error);
+    alert('Failed to send payment email. Please try again.');
+  }
+}
+
+
+
 }

@@ -1,12 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, NgModule, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { addDoc, collection, doc, Firestore, getDoc } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 
-// Custom Components
 import { BusinessAddressMapComponent } from '../../../shared/core/business-address-map/business-address-map.component';
 import { SpinnnerComponent } from '../../../shared/core/spinner/spinner.component';
+
+interface TaxFilingForm {
+  businessId: string;
+  businessName: string;
+  businessAddress: string;
+  fullName: string;
+  contactNumber: string;
+  email: string;
+  forYear: number;
+  lineOfBusinessCode: string;
+  lineOfBusiness: string;
+  monthlyGrossSales?: string;
+  periodCovered?: string;
+  plateNo: string;
+  permitNo: string;
+  dateIssued?: string;
+  dateRegistered?: string;
+  typeOfBusiness: string;
+  noOfEmployees: number | null;
+  deadline?: string;
+  tinNumber?: string;
+  natureOfBusiness?: string;
+  mayorsPermitNo?: string;
+  registrationNo?: string;
+  registrationDate?: string;
+  status: 'Pending' | 'Sent' | 'Approved';
+}
 
 @Component({
   selector: 'app-tax-filing-form',
@@ -21,16 +47,13 @@ import { SpinnnerComponent } from '../../../shared/core/spinner/spinner.componen
   styleUrls: ['./tax-filing-form.component.scss']
 })
 export class TaxFilingFormComponent implements OnInit {
-  // The UID passed from parent or route param
   @Input() uid: string | null = null;
 
-  // Modal and Spinner states
   showMapModal = false;
   navigating = false;
   spinnerMessage = 'Saving your data, please wait...';
 
-  // Form object holding all tax filing fields
-  form = {
+  form: TaxFilingForm = {
     businessId: '',
     businessName: '',
     businessAddress: '',
@@ -47,7 +70,7 @@ export class TaxFilingFormComponent implements OnInit {
     dateIssued: '',
     dateRegistered: '',
     typeOfBusiness: '',
-    noOfEmployees: '',
+    noOfEmployees: null,
     deadline: '',
     tinNumber: '',
     natureOfBusiness: '',
@@ -57,15 +80,11 @@ export class TaxFilingFormComponent implements OnInit {
     status: 'Pending'
   };
 
-
   constructor(
     private firestore: Firestore,
     private router: Router
   ) {}
 
-  /**
-   * On component init, fetch user data using UID and pre-fill the form.
-   */
   async ngOnInit() {
     if (!this.uid) {
       console.error('UID is missing');
@@ -89,64 +108,41 @@ export class TaxFilingFormComponent implements OnInit {
     }
   }
 
-
-  /**
-   * Opens the business address map modal.
-   */
   openMapModal() {
     this.showMapModal = true;
   }
 
-  /**
-   * Closes the business address map modal.
-   */
   closeMapModal() {
     this.showMapModal = false;
   }
 
-  /**
-   * Sets the selected address from the map modal.
-   * @param address Address returned from the child map component.
-   */
   setAddress(address: string) {
     this.form.businessAddress = address;
     this.closeMapModal();
   }
 
-  /**
-   * Submits the form and saves data to Firestore.
-   */
   async submitForm() {
     if (!this.uid) {
       console.error('UID is missing');
       return;
     }
 
-    // Show spinner
     this.navigating = true;
 
-    // Attach UID to form before saving
     const taxFilingData = {
       ...this.form,
       userUid: this.uid
     };
 
     try {
-      // Save tax filing data into the Firestore collection
-      const docRef = await addDoc(collection(this.firestore, 'taxFilings'), taxFilingData);
-      console.log('✅ Tax filing document created with ID:', docRef.id);
+      await addDoc(collection(this.firestore, 'taxFilings'), taxFilingData);
+      console.log('✅ Tax filing document created');
 
-      // Optional: Navigate back to dashboard or list
       this.router.navigate(['/taxpayer']);
-
     } catch (error) {
       console.error('❌ Error adding tax filing:', error);
     } finally {
-      // Hide spinner regardless of success or failure
       this.navigating = false;
     }
   }
-
-
-
 }

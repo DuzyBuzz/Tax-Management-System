@@ -31,32 +31,52 @@
   <div *ngFor="let filing of taxFilings" class="bg-white shadow-lg rounded-xl p-6 mb-6 hover:shadow-xl transition duration-300">
     <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
       <h3 class="text-2xl font-semibold text-gray-800">{{ filing.businessName }}</h3>
-      <div class="flex gap-2">
-        <button
-          *ngIf="filing.status !== 'Approved'"
-          (click)="approveFiling(filing.id)"
-          class="text-green-600 hover:text-white hover:bg-green-600 font-semibold px-4 py-2 rounded-md border border-green-600 transition duration-300"
-        >
-          Approve
-        </button>
-        <button
-          (click)="confirmDelete(filing.id)"
-          class="text-red-600 hover:text-white hover:bg-red-600 font-semibold px-4 py-2 rounded-md border border-red-600 transition duration-300"
-        >
-          Delete
-        </button>
-      </div>
+<div class="flex gap-2 items-center">
+  <!-- Send Payment button (if status is Pending) -->
+  <button
+    *ngIf="filing.status === 'Pending'"
+    (click)="sendPayment(filing)"
+    class="text-blue-600 hover:text-white hover:bg-blue-600 font-semibold px-4 py-2 rounded-md border border-blue-600 transition duration-300"
+  >
+    Send Payment
+  </button>
+
+  <!-- Approve button (if status is Payment Sent) -->
+  <button
+    *ngIf="filing.status === 'Payment Sent'"
+    (click)="approveFiling(filing.id)"
+    class="text-green-600 hover:text-white hover:bg-green-600 font-semibold px-4 py-2 rounded-md border border-green-600 transition duration-300"
+  >
+    Approve
+  </button>
+
+  <!-- Optional: show a label if already approved -->
+  <span *ngIf="filing.status === 'Approved'" class="text-gray-600 font-semibold px-4 py-2">
+    Approved
+  </span>
+
+  <!-- Delete button (always visible) -->
+  <button
+    (click)="confirmDelete(filing.id)"
+    class="text-red-600 hover:text-white hover:bg-red-600 font-semibold px-4 py-2 rounded-md border border-red-600 transition duration-300"
+  >
+    Delete
+  </button>
+</div>
+
+
+
     </div>
 
 
     <div class="space-y-2 text-gray-700 text-base">
       <p><strong>Business ID:</strong> {{ filing.businessId }}</p>
       <p><strong>Full Name:</strong> {{ filing.fullName }}</p>
-      <p><strong>For Year:</strong> {{ filing.forYear }}</p>
+      <p><strong>Full Name:</strong> {{ filing.businessName }}</p>
+      <p><strong>Email:</strong> {{ filing.email }}</p>
       <p><strong>Line of Business:</strong> {{ filing.lineOfBusiness }}</p>
       <p><strong>Type of Business:</strong> {{ filing.typeOfBusiness }}</p>
       <p><strong>No. of Employees:</strong> {{ filing.noOfEmployees }}</p>
-      <p><strong>Date Registered:</strong> {{ filing.dateRegistered || 'N/A' }}</p>
 
       <!-- Status badge -->
       <p class="flex items-center gap-2">
