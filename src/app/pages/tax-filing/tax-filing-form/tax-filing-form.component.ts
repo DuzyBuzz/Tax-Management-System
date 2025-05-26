@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Firestore, collection, addDoc } from '@angular/fire/firestore'; // Modular Firestore import
 
 interface Payment {
   name: string;
@@ -23,12 +22,12 @@ interface Payment {
 })
 export class TaxFilingFormComponent {
   form!: FormGroup;
-  dueDate = new Date('2025-12-31');
+dueDate = new Date(new Date().getFullYear(), 11, 31);
+
   grandTotal = 0;
   paymentStatus = 'Unpaid';
 
   paymentItems: Payment[] = [
-    { name: 'Due and Payable to the Municipality of Pototan', taxDue: '', interest: '', surcharge: '' },
     { name: 'BARANGAY CLEARANCE FEE-MALUSGOD (NEW MARKET)', taxDue: 200, interest: 0, surcharge: 0 },
     { name: 'Occupation Fee', taxDue: 200, interest: 0, surcharge: 0 },
     { name: 'Solid Waste', taxDue: 240, interest: 0, surcharge: 0 },
@@ -49,7 +48,7 @@ export class TaxFilingFormComponent {
     'Tabuc', 'Tagpuro', 'Tangal', 'Tigbauan', 'Tinaguiban', 'Tinaplan'
   ];
 
-  constructor(private fb: FormBuilder, private firestore: Firestore) { // Use modular Firestore
+  constructor(private fb: FormBuilder) {
     this.initializeForm();
     this.setupValueChanges();
     this.calculateGrandTotal();
@@ -104,21 +103,15 @@ export class TaxFilingFormComponent {
     });
   }
 
-  async onSubmit() {
+  onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       alert('Please fill in all required fields correctly.');
       return;
     }
     const formData = this.form.value;
-    try {
-      const colRef = collection(this.firestore, 'tax_filings');
-      await addDoc(colRef, formData);
-      alert('Form submitted and saved successfully!');
-      this.form.reset(); // Optionally reset the form
-    } catch (error) {
-      alert('Error saving to Firestore: ' + error);
-    }
+    console.log('Form Submitted:', formData);
+    alert('Form submitted successfully!');
   }
     createActivity(activityName = '', capitalInvestment = 0, essential = 0, nonEssential = 0): FormGroup {
     return this.fb.group({
@@ -155,6 +148,10 @@ export class TaxFilingFormComponent {
   get totalGrossReceiptsNonEssential(): number {
     return this.activities.controls.reduce((sum, group) => sum + Number(group.get('grossReceiptsNonEssential')?.value || 0), 0);
   }
-
+// Add this method to enable printing the form
+printForm(): void {
+  document.title = ''; // Remove title temporarily
+  window.print();
+}
 
 }

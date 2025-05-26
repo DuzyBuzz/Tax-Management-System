@@ -98,3 +98,23 @@
 .border-thick {
   border-width: 2px !important;
 }
+/* styles.css or component-name.component.css */
+@media print {
+  body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden !important; /* hides scrollbars */
+  }
+
+  /* Make the print area fill the page */
+  #print-section {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Hide buttons and anything with class 'no-print' */
+  .no-print, header, footer, nav, .sidebar {
+    display: none !important;
+  }
+}

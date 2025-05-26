@@ -10,272 +10,291 @@
 
     <!-- Form -->
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="text-xs mt-4">
-<!-- HEADER INFORMATION -->
-<div class="grid grid-cols-[2fr_2fr_0.5fr] text-xs border border-black">
-  <!-- Row 1 -->
-  <!-- Column 1: Label + input inline -->
-  <div class="flex items-center px-2 py-1 border-r border-black">
-    <strong class="mr-1 whitespace-nowrap">Business ID No.:</strong>
-    <input formControlName="businessId" type="text"
-  class="w-full border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('businessId')?.invalid && form.get('businessId')?.touched}" />
-  </div>
+        <!-- HEADER INFORMATION -->
+        <div class="grid grid-cols-[2fr_2fr_0.5fr] text-xs border border-black">
+          <!-- Row 1 -->
+          <!-- Column 1: Label + input inline -->
+          <div class="flex items-center px-2 py-1 border-r border-black">
+            <strong class="mr-1 whitespace-nowrap">Business ID No.:</strong>
+            <input formControlName="businessId" type="text"
+          class="w-full border-b border-black focus:outline-none"
+          [ngClass]="{'border-red-500': form.get('businessId')?.invalid && form.get('businessId')?.touched}" />
+          </div>
 
-  <!-- Column 2: Label above input -->
-  <div class="px-2 py-1 border-r border-black">
-    <strong class="block whitespace-nowrap">TOP No.:</strong>
-    <input formControlName="topNo" type="text"
-  class="w-full border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('topNo')?.invalid && form.get('topNo')?.touched}" />
-  </div>
+          <!-- Column 2: Label above input -->
+          <div class="px-2 py-1 border-r border-black">
+            <strong class="block whitespace-nowrap">TOP No.:</strong>
+            <input formControlName="topNo" type="text"
+          class="w-full border-b border-black focus:outline-none"
+          [ngClass]="{'border-red-500': form.get('topNo')?.invalid && form.get('topNo')?.touched}" />
+          </div>
 
-  <!-- Column 3: Label above input -->
-  <div class="px-2 py-1 border-black">
-    <strong class="block whitespace-nowrap">Type of Application:</strong>
-    <select formControlName="typeOfApplication"
-  class="w-15 border-b border-black focus:outline-none bg-white"
-  [ngClass]="{'border-red-500': form.get('typeOfApplication')?.invalid && form.get('typeOfApplication')?.touched}">
-      <option value="New">New</option>
-      <option value="Renew">Renew</option>
-    </select>
-  </div>
+          <!-- Column 3: Label above input -->
+          <div class="px-2 py-1 border-black">
+            <strong class="block whitespace-nowrap">Type of Application:</strong>
+            <select formControlName="typeOfApplication"
+          class="w-15 border-b border-black focus:outline-none bg-white"
+          [ngClass]="{'border-red-500': form.get('typeOfApplication')?.invalid && form.get('typeOfApplication')?.touched}">
+              <option value="New">New</option>
+              <option value="Renew">Renew</option>
+            </select>
+          </div>
 
-  <!-- Row 2 -->
-  <div class="flex items-center px-2 py-1 border-t border-r border-black">
-    <strong class="mr-1 whitespace-nowrap">Business Name:</strong>
-    <input formControlName="businessName" type="text"
-  class="w-full border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('businessName')?.invalid && form.get('businessName')?.touched}" />
-  </div>
+          <!-- Row 2 -->
+          <div class="flex items-center px-2 py-1 border-t border-r border-black">
+            <strong class="mr-1 whitespace-nowrap">Business Name:</strong>
+            <input formControlName="businessName" type="text"
+          class="w-full border-b border-black focus:outline-none"
+          [ngClass]="{'border-red-500': form.get('businessName')?.invalid && form.get('businessName')?.touched}" />
+          </div>
 
-  <div class="px-2 py-1 border-t border-r border-black">
-    <strong class="block whitespace-nowrap">Owner's Name:</strong>
-    <input formControlName="ownerName" type="text"
-  class="w-full border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('ownerName')?.invalid && form.get('ownerName')?.touched}" />
-  </div>
+          <div class="px-2 py-1 border-t border-r border-black">
+            <strong class="block whitespace-nowrap">Owner's Name:</strong>
+            <input formControlName="ownerName" type="text"
+          class="w-full border-b border-black focus:outline-none"
+          [ngClass]="{'border-red-500': form.get('ownerName')?.invalid && form.get('ownerName')?.touched}" />
+          </div>
 
-<div class="flex items-center gap-2 px-2 py-1 border-t border-black">
-  <strong class="whitespace-nowrap">No. of Employee:</strong>
-  <input
-    formControlName="numberOfEmployees"
-    type="number"
-    min="0"
-    class="w-9 border-b border-black focus:outline-none"
-    [ngClass]="{'border-red-500': form.get('numberOfEmployees')?.invalid && form.get('numberOfEmployees')?.touched}" />
-</div>
+          <div class="flex items-center gap-2 px-2 py-1 border-t border-black">
+            <strong class="whitespace-nowrap">No. of Employee:</strong>
+            <input
+              formControlName="numberOfEmployees"
+              type="number"
+              min="0"
+              class="w-9 border-b border-black focus:outline-none"
+              [ngClass]="{'border-red-500': form.get('numberOfEmployees')?.invalid && form.get('numberOfEmployees')?.touched}" />
+          </div>
 
 
 
-  <!-- Row 3 -->
-  <div class="flex items-center px-2 py-1 border-t border-r border-black">
-    <strong class="mr-1 whitespace-nowrap">Address:</strong>
-    <select formControlName="barangay"
-  class="w-full border-b border-black focus:outline-none bg-white"
-  [ngClass]="{'border-red-500': form.get('barangay')?.invalid && form.get('barangay')?.touched}">
-      <option value="" disabled>Select a barangay</option>
-      <option *ngFor="let brgy of barangays" [value]="brgy">{{ brgy }}</option>
-    </select>
-  </div>
+          <!-- Row 3 -->
+          <div class="flex items-center px-2 py-1 border-t border-r border-black">
+            <strong class="mr-1 whitespace-nowrap">Address:</strong>
+            <select formControlName="barangay"
+          class="w-full border-b border-black focus:outline-none bg-white"
+          [ngClass]="{'border-red-500': form.get('barangay')?.invalid && form.get('barangay')?.touched}">
+              <option value="" disabled>Select a barangay</option>
+              <option *ngFor="let brgy of barangays" [value]="brgy">{{ brgy }}</option>
+            </select>
+          </div>
 
-  <div class="px-2 py-1 border-t border-r border-black">
-    <strong class="block whitespace-nowrap">Date Assessed:</strong>
-    <input formControlName="addressDateAssessed" type="date"
-  class="w-full border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('addressDateAssessed')?.invalid && form.get('addressDateAssessed')?.touched}" />
-  </div>
+          <div class="px-2 py-1 border-t border-r border-black">
+            <strong class="block whitespace-nowrap">Date Assessed:</strong>
+            <input formControlName="addressDateAssessed" type="date"
+          class="w-full border-b border-black focus:outline-none"
+          [ngClass]="{'border-red-500': form.get('addressDateAssessed')?.invalid && form.get('addressDateAssessed')?.touched}" />
+          </div>
 
-<div class="px-2 py-1 border-t border-black flex space-x-6">
-  <!-- First Column -->
-  <div class="flex flex-col">
-    <strong class="block whitespace-nowrap">Tax Year:</strong>
-    <input formControlName="taxYear" type="number" min="1900" max="2100"
-  class="w-10 border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('taxYear')?.invalid && form.get('taxYear')?.touched}" />
-  </div>
+          <div class="px-1 py-0.5 border-t border-black flex space-x-1  text-sm">
+            <!-- First Column with right border -->
+            <div class="flex flex-col border-r border-black pr-2">
+              <strong class="block whitespace-nowrap font-normal">Tax Year:</strong>
+              <input formControlName="taxYear" type="number" min="1900" max="2100"
+                class="w-10 border-b border-black focus:outline-none text-xs"
+                [ngClass]="{'border-red-500': form.get('taxYear')?.invalid && form.get('taxYear')?.touched}" />
+            </div>
 
-  <!-- Second Column -->
-  <div class="flex flex-col">
-    <strong class="block whitespace-nowrap">Contact No.:</strong>
-    <input formControlName="contactNumber" type="text"
-  class="w-20 border-b border-black focus:outline-none"
-  [ngClass]="{'border-red-500': form.get('contactNumber')?.invalid && form.get('contactNumber')?.touched}" />
-  </div>
-</div>
-
-</div>
+            <!-- Second Column -->
+            <div class="flex flex-col pl-2">
+              <strong class="block whitespace-nowrap font-normal">Contact No.:</strong>
+              <input formControlName="contactNumber" type="text"
+                class="w-16 border-b border-black focus:outline-none text-xs"
+                [ngClass]="{'border-red-500': form.get('contactNumber')?.invalid && form.get('contactNumber')?.touched}" />
+            </div>
+          </div>
 
 
 
 
-<!-- ACTIVITY AND INVESTMENT TABLE -->
-<div class="mt-4 text-xs">
-  <table class="w-full border-collapse border border-black table-fixed text-left">
-    <thead>
+        </div>
+
+
+
+
+        <!-- ACTIVITY AND INVESTMENT TABLE -->
+        <div class="mt-4 text-xs">
+          <table class="w-full border-collapse border border-black table-fixed text-left">
+            <thead>
+              <tr>
+                <!-- rowspan=2 on th is fine -->
+                <th
+                  class="border border-black px-2 py-1 text-center font-bold align-middle"
+                  rowspan="2"
+                >
+                  BUSINESS ACTIVITY
+                </th>
+                <th
+                  class="border border-black px-2 py-1 text-center font-bold align-middle"
+                  rowspan="2"
+                >
+                  Capital Investment
+                </th>
+                <th
+                  class="border border-black px-2 py-1 text-center font-bold"
+                  colspan="2"
+                >
+                  Gross Receipts
+                </th>
+              </tr>
+              <tr>
+                <th class="border border-black px-2 py-1 text-center font-bold">
+                  Essential
+                </th>
+                <th class="border border-black px-2 py-1 text-center font-bold">
+                  Non-essential
+                </th>
+              </tr>
+            </thead>
+            <tbody formArrayName="activities">
+              <tr *ngFor="let activity of activities.controls; let i = index" [formGroupName]="i">
+                <td class="border border-black px-2 py-1">
+                  <input
+                    formControlName="activityName"
+                    type="text"
+                    class="w-full text-xs focus:outline-none"
+                    [ngClass]="{'border-red-500': activity.get('activityName')?.invalid && activity.get('activityName')?.touched}"
+                  />
+                </td>
+                <td class="border border-black px-2 py-1 text-right">
+                  <input
+                    formControlName="capitalInvestment"
+                    type="number"
+                    class="w-full text-xs text-right focus:outline-none"
+                    [ngClass]="{'border-red-500': activity.get('capitalInvestment')?.invalid && activity.get('capitalInvestment')?.touched}"
+                  />
+                </td>
+                <td class="border border-black px-2 py-1 text-right">
+                  <input
+                    formControlName="grossReceiptsEssential"
+                    type="number"
+                    class="w-full text-xs text-right focus:outline-none"
+                    [ngClass]="{'border-red-500': activity.get('grossReceiptsEssential')?.invalid && activity.get('grossReceiptsEssential')?.touched}"
+                  />
+                </td>
+                <td class="border border-black px-2 py-1 text-right">
+                  <input
+                    formControlName="grossReceiptsNonEssential"
+                    type="number"
+                    class="w-full text-xs text-right focus:outline-none"
+                    [ngClass]="{'border-red-500': activity.get('grossReceiptsNonEssential')?.invalid && activity.get('grossReceiptsNonEssential')?.touched}"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+
+
+
+          <!-- Payments Table -->
+          <table class="w-full text-xs border-collapse border border-black mt-4">
+            <thead>
+              <tr>
+     <th class="border border-black px-2 py-1 w-[40%]">Particulars</th>
+                <th class="border border-black px-2 py-1">Tax Due</th>
+                <th class="border border-black px-2 py-1">Interest</th>
+                <th class="border border-black px-2 py-1">Surcharge</th>
+                <th class="border border-black px-2 py-1">Total</th>
+              </tr>
+            </thead>
+
+    <tbody formArrayName="payments">
+        <!-- Static First Row -->
       <tr>
-        <!-- rowspan=2 on th is fine -->
-        <th
-          class="border border-black px-2 py-1 text-center font-bold align-middle"
-          rowspan="2"
-        >
-          BUSINESS ACTIVITY
-        </th>
-        <th
-          class="border border-black px-2 py-1 text-center font-bold align-middle"
-          rowspan="2"
-        >
-          Capital Investment
-        </th>
-        <th
-          class="border border-black px-2 py-1 text-center font-bold"
-          colspan="2"
-        >
-          Gross Receipts
-        </th>
-      </tr>
-      <tr>
-        <th class="border border-black px-2 py-1 text-center font-bold">
-          Essential
-        </th>
-        <th class="border border-black px-2 py-1 text-center font-bold">
-          Non-essential
-        </th>
-      </tr>
-    </thead>
-    <tbody formArrayName="activities">
-      <tr *ngFor="let activity of activities.controls; let i = index" [formGroupName]="i">
+        <td class="border border-black px-2 py-1 text-center">
+          Due and Payable to the Municipality of Pototan
+        </td>
         <td class="border border-black px-2 py-1">
-          <input
-            formControlName="activityName"
-            type="text"
-            class="w-full text-xs focus:outline-none"
-            [ngClass]="{'border-red-500': activity.get('activityName')?.invalid && activity.get('activityName')?.touched}"
-          />
+          <input type="number" class="w-full px-1" disabled />
         </td>
-        <td class="border border-black px-2 py-1 text-right">
-          <input
-            formControlName="capitalInvestment"
-            type="number"
-            class="w-full text-xs text-right focus:outline-none"
-            [ngClass]="{'border-red-500': activity.get('capitalInvestment')?.invalid && activity.get('capitalInvestment')?.touched}"
-          />
+        <td class="border border-black px-2 py-1">
+          <input type="number" class="w-full px-1" disabled />
         </td>
-        <td class="border border-black px-2 py-1 text-right">
-          <input
-            formControlName="grossReceiptsEssential"
-            type="number"
-            class="w-full text-xs text-right focus:outline-none"
-            [ngClass]="{'border-red-500': activity.get('grossReceiptsEssential')?.invalid && activity.get('grossReceiptsEssential')?.touched}"
-          />
+        <td class="border border-black px-2 py-1">
+          <input type="number" class="w-full px-1" disabled />
         </td>
-        <td class="border border-black px-2 py-1 text-right">
-          <input
-            formControlName="grossReceiptsNonEssential"
-            type="number"
-            class="w-full text-xs text-right focus:outline-none"
-            [ngClass]="{'border-red-500': activity.get('grossReceiptsNonEssential')?.invalid && activity.get('grossReceiptsNonEssential')?.touched}"
-          />
+      </tr>
+      <tr *ngFor="let payment of payments.controls; let i = index" [formGroupName]="i">
+    <td
+      class="border border-black px-2 py-1"
+
+    >
+      {{ payment.get('name')?.value }}
+    </td>
+
+        <td class="border border-black px-2 py-1">
+          <input formControlName="taxDue" type="number" class="w-full px-1"
+    [ngClass]="{'border-red-500': payment.get('taxDue')?.invalid && payment.get('taxDue')?.touched}" />
+        </td>
+        <td class="border border-black px-2 py-1">
+          <input formControlName="interest" type="number" class="w-full px-1"
+    [ngClass]="{'border-red-500': payment.get('interest')?.invalid && payment.get('interest')?.touched}" />
+        </td>
+        <td class="border border-black px-2 py-1">
+          <input formControlName="surcharge" type="number" class="w-full px-1"
+    [ngClass]="{'border-red-500': payment.get('surcharge')?.invalid && payment.get('surcharge')?.touched}" />
+        </td>
+        <td class="border border-black px-2 py-1 text-right font-semibold">
+          <!-- If first row, show nothing or a dash; else show computed total -->
+            ₱{{ getRowTotal(payment) | number: '1.2-2' }}
+          <ng-template #emptyTotal>
+          </ng-template>
         </td>
       </tr>
     </tbody>
-  </table>
+
+            <tfoot>
+              <tr>
+                <td colspan="4" class="border border-black px-2 py-1 font-bold text-left">Grand Total</td>
+                <td class="border border-black px-2 py-1 font-bold text-right">₱{{ grandTotal | number:'1.2-2' }}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Remarks -->
+          <div class="mt-4 text-[11px] border-t pt-2 text-gray-700">
+            <p class="italic font-bold">Remarks:</p>
+            <p class="italic">* Subject to Annual, Semi-Annual/Semestral, and Quarterly Mode of Payment</p>
+            <p>** One-time Payment</p>
+          </div>
+
+          <!-- Payment Info Summary -->
+          <div class="mt-3 text-sm">
+            <p><strong>Payment Mode:</strong> Annual</p>
+            <table class="w-full border border-black text-left mt-2">
+              <tbody>
+                <tr>
+                  <td class="border border-black px-2 py-1 font-semibold w-1/2">Total Due and Payable</td>
+                  <td class="border border-black px-2 py-1 font-bold">₱{{ grandTotal | number:'1.2-2' }}</td>
+                </tr>
+                <tr>
+                  <td class="border border-black px-2 py-1 font-semibold">Status</td>
+                  <td class="border border-black px-2 py-1 text-red-600 font-semibold">{{ paymentStatus }}</td>
+                </tr>
+                <tr>
+                  <td class="border border-black px-2 py-1 font-semibold">Due Date</td>
+                  <td class="border border-black px-2 py-1">{{ dueDate | date:'longDate' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <!-- Notes -->
+    <!-- Notes -->
+    <ul class="mt-6 ml-1 text-[11px] leading-tight list-decimal list-inside">
+      <li>Please pay the amount due accordingly through online or the Office of the Treasurer, LGU Pototan, Iloilo.</li>
+      <li>Late payment is subject to 25% surcharge and monthly interest rate of 2% of the amount due to be paid at the same time and in the same manner as tax due.</li>
+      <li>For due dates which fall on Saturdays, Sundays, and Holidays shall be paid on the last working day prior to the due date.</li>
+    </ul>
+  <!-- Buttons go OUTSIDE the print-section but INSIDE the form -->
+  <div class="mt-6 flex justify-end gap-2 print-hide">
+<!-- Buttons to hide when printing -->
+<div class="no-print mt-2 space-x-2">
+  <button (click)="printForm()" class="bg-green-500 rounded-lg text-white px-4 py-2">Print</button>
+  <button  type="submit" class="bg-blue-500 rounded-lg text-white px-4 py-2">Submit</button>
 </div>
 
-
-
-
-
-      <!-- Payments Table -->
-      <table class="w-full text-xs border-collapse border border-black mt-4">
-        <thead>
-          <tr>
-   <th class="border border-black px-2 py-1 w-[40%]">Particulars</th>
-            <th class="border border-black px-2 py-1">Tax Due</th>
-            <th class="border border-black px-2 py-1">Interest</th>
-            <th class="border border-black px-2 py-1">Surcharge</th>
-            <th class="border border-black px-2 py-1">Total</th>
-          </tr>
-        </thead>
-<tbody formArrayName="payments">
-  <tr *ngFor="let payment of payments.controls; let i = index" [formGroupName]="i">
-<td
-  class="border border-black px-2 py-1"
-  [ngClass]="{ 'text-center': i === 0 }"
->
-  {{ payment.get('name')?.value }}
-</td>
-
-    <td class="border border-black px-2 py-1">
-      <input formControlName="taxDue" type="number" class="w-full px-1"
-  [ngClass]="{'border-red-500': payment.get('taxDue')?.invalid && payment.get('taxDue')?.touched}" />
-    </td>
-    <td class="border border-black px-2 py-1">
-      <input formControlName="interest" type="number" class="w-full px-1"
-  [ngClass]="{'border-red-500': payment.get('interest')?.invalid && payment.get('interest')?.touched}" />
-    </td>
-    <td class="border border-black px-2 py-1">
-      <input formControlName="surcharge" type="number" class="w-full px-1"
-  [ngClass]="{'border-red-500': payment.get('surcharge')?.invalid && payment.get('surcharge')?.touched}" />
-    </td>
-    <td class="border border-black px-2 py-1 text-right font-semibold">
-      <!-- If first row, show nothing or a dash; else show computed total -->
-      <ng-container *ngIf="i !== 0; else emptyTotal">
-        ₱{{ getRowTotal(payment) | number: '1.2-2' }}
-      </ng-container>
-      <ng-template #emptyTotal>
-      </ng-template>
-    </td>
-  </tr>
-</tbody>
-
-        <tfoot>
-          <tr>
-            <td colspan="4" class="border border-black px-2 py-1 font-bold text-left">Grand Total</td>
-            <td class="border border-black px-2 py-1 font-bold text-right">₱{{ grandTotal | number:'1.2-2' }}</td>
-          </tr>
-        </tfoot>
-      </table>
-
-      <!-- Remarks -->
-      <div class="mt-4 text-[11px] border-t pt-2 text-gray-700">
-        <p class="italic font-bold">Remarks:</p>
-        <p class="italic">* Subject to Annual, Semi-Annual/Semestral, and Quarterly Mode of Payment</p>
-        <p>** One-time Payment</p>
-      </div>
-
-      <!-- Payment Info Summary -->
-      <div class="mt-3 text-sm">
-        <p><strong>Payment Mode:</strong> Annual</p>
-        <table class="w-full border border-black text-left mt-2">
-          <tbody>
-            <tr>
-              <td class="border border-black px-2 py-1 font-semibold w-1/2">Total Due and Payable</td>
-              <td class="border border-black px-2 py-1 font-bold">₱{{ grandTotal | number:'1.2-2' }}</td>
-            </tr>
-            <tr>
-              <td class="border border-black px-2 py-1 font-semibold">Status</td>
-              <td class="border border-black px-2 py-1 text-red-600 font-semibold">{{ paymentStatus }}</td>
-            </tr>
-            <tr>
-              <td class="border border-black px-2 py-1 font-semibold">Due Date</td>
-              <td class="border border-black px-2 py-1">{{ dueDate | date:'longDate' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    <!-- Notes -->
-<!-- Notes -->
-<ul class="mt-6 ml-1 text-[11px] leading-tight list-decimal list-inside">
-  <li>Please pat the amount due accourdingly through online or the Office of the Tresurer,LGU Pototan, Iloilo.</li>
-  <li>Late payment is subject to 25% surcharge and nonthly interest rate of 2% of the amount due to paid at the same time and in the same manner as tax due.</li>
-  <li>For due date which falls on Saturdays, Sundays and Holidays shall be paid on the last working day prior to the due date..</li>
-</ul>
-      <!-- Submit Button -->
-      <div class="mt-6 flex justify-end">
-        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-md shadow hover:bg-blue-700 transition">
-          Submit
-        </button>
-      </div>
-    </form>
   </div>
+</form>
 </div>
