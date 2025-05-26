@@ -110,7 +110,7 @@
   /* Make the print area fill the page */
   #print-section {
     height: 150vh;
-    overflow: hidden;
+    overflow-y: hidden;
   }
 
   /* Hide buttons and anything with class 'no-print' */

@@ -31,6 +31,9 @@ export class TaxFilingFormComponent {
 
   showModal = true; // Add this property
 
+  errorMessage: string | null = null; // Add this property
+  successMessage: string | null = null; // Add this property
+
   paymentItems: Payment[] = [
     { name: 'BARANGAY CLEARANCE FEE-MALUSGOD (NEW MARKET)', taxDue: 200, interest: 0, surcharge: 0 },
     { name: 'Occupation Fee', taxDue: 200, interest: 0, surcharge: 0 },
@@ -171,7 +174,7 @@ export class TaxFilingFormComponent {
   async onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      alert('Please fill in all required fields correctly.');
+      this.showError('Please fill in all required fields correctly.');
       return;
     }
     const formData = {
@@ -180,11 +183,11 @@ export class TaxFilingFormComponent {
     };
     try {
       await addDoc(collection(this.firestore, 'tax_filings'), formData);
-      alert('Form submitted and saved successfully!');
+      this.showSuccess('Form submitted and saved successfully!');
       this.printForm();
       this.showModal = false;
     } catch (error) {
-      alert('Error saving to Firestore: ' + (error as any)?.message || error);
+      this.showError('Error saving to Firestore: ' + ((error as any)?.message || error));
     }
   }
     createActivity(activityName = '', capitalInvestment = 0, essential = 0, nonEssential = 0): FormGroup {
@@ -262,11 +265,27 @@ closeModal() {
           ...this.form.value,
           grandTotal: this.grandTotal
         });
-        alert('Tax filing updated successfully!');
+        this.showSuccess('Tax filing updated successfully!');
         this.close.emit();
       } catch (error) {
-        alert('Error updating tax filing: ' + (error as any)?.message || error);
+        this.showError('Error updating tax filing: ' + ((error as any)?.message || error));
       }
     }
   }
+
+  // Add this method for showing error messages
+showError(message: string) {
+  this.errorMessage = message;
+  setTimeout(() => {
+    this.errorMessage = null;
+  }, 4000); // Hide after 4 seconds
+}
+
+// Add this method for showing success messages
+showSuccess(message: string) {
+  this.successMessage = message;
+  setTimeout(() => {
+    this.successMessage = null;
+  }, 4000); // Hide after 4 seconds
+}
 }
