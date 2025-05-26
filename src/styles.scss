@@ -100,25 +100,21 @@
 }
 /* styles.css or component-name.component.css */
 @media print {
-  @page {
-    size: legal portrait; /* Can also be 'legal landscape' */
-    margin: 1in; /* You can adjust margins */
-  }
-
-  body {
+  body, html {
+    height: 100%;
     margin: 0;
     padding: 0;
+    overflow: hidden !important; /* hides scrollbars */
+  }
+
+  /* Make the print area fill the page */
+  #print-section {
+    height: 150vh;
     overflow: hidden;
   }
 
+  /* Hide buttons and anything with class 'no-print' */
   .no-print {
     display: none !important;
   }
-
-  /* Optional: make printed form take full height/width */
-  .print-section {
-    width: 100%;
-    height: 100%;
-  }
 }
-

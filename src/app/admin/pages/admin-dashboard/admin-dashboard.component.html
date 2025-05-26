@@ -1,45 +1,133 @@
 <div class="container mx-auto p-6">
-  <h1 class="text-3xl font-bold text-gray-800 mb-6">📊 Tax Analytics Dashboard</h1>
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Tax Analytics Dashboard</h1>
 
-  <!-- 📌 Analytics Overview -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div class="bg-blue-600 text-white p-6 rounded-lg shadow-md">
+  <!-- Overview Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-blue-600 text-white p-6 rounded-lg shadow-md flex flex-col items-center">
       <h2 class="text-lg font-semibold">Total Tax Filings</h2>
-      <p class="text-3xl font-bold mt-2">{{ totalTaxFilings }}</p>
+      <p class="text-4xl font-extrabold mt-2">{{ totalTaxFilings }}</p>
     </div>
-
-    <div class="bg-green-600 text-white p-6 rounded-lg shadow-md">
-      <h2 class="text-lg font-semibold">Pending Tax Reports</h2>
-      <p class="text-3xl font-bold mt-2">{{ pendingTaxFilings }}</p>
+    <div class="bg-emerald-600 text-white p-6 rounded-lg shadow-md flex flex-col items-center">
+      <h2 class="text-lg font-semibold">Successful Transactions</h2>
+      <p class="text-4xl font-extrabold mt-2">{{ successfulTransactions }}</p>
     </div>
-
+    <div class="bg-yellow-500 text-white p-6 rounded-lg shadow-md flex flex-col items-center">
+      <h2 class="text-lg font-semibold">Pending (Payment Sent)</h2>
+      <p class="text-4xl font-extrabold mt-2">{{ pendingPaymentSentCount }}</p>
+    </div>
+    <div class="bg-red-600 text-white p-6 rounded-lg shadow-md flex flex-col items-center">
+      <h2 class="text-lg font-semibold">Declined Filings</h2>
+      <p class="text-4xl font-extrabold mt-2">{{ declinedFilings }}</p>
+    </div>
   </div>
 
-  <!-- 📊 Charts Section -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-    <!-- ✅ Tax Filing Status Pie Chart -->
+  <!-- Charts Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- Pie Chart: Status Breakdown -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-bold text-gray-700 mb-4">Tax Filing Status</h2>
+      <h2 class="text-xl font-bold text-gray-700 mb-4">Tax Filing Status Breakdown</h2>
       <ngx-charts-pie-chart
         [results]="taxFilingStatus"
         [scheme]="colorScheme"
         [legend]="true"
-        [labels]="true">
+        [labels]="true"
+        [doughnut]="true"
+        [explodeSlices]="false"
+        [gradient]="false"
+        [animations]="true"
+        [view]="[350,300]">
       </ngx-charts-pie-chart>
     </div>
 
-    <!-- ✅ Pending Tax Reports Bar Chart -->
+    <!-- Type of Application Analytics -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-      <h2 class="text-xl font-bold text-gray-700 mb-4">Pending Tax Reports</h2>
+      <h2 class="text-xl font-bold text-gray-700 mb-4">Type of Application</h2>
       <ngx-charts-bar-vertical
-        [results]="pendingTaxReports"
+        [results]="typeOfApplicationAnalytics"
         [scheme]="colorScheme"
         [xAxis]="true"
         [yAxis]="true"
-        [legend]="true"
+        [legend]="false"
         [showXAxisLabel]="true"
-        [showYAxisLabel]="true">
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Type of Application'"
+        [yAxisLabel]="'Count'"
+        [animations]="true"
+        [view]="[350,300]">
       </ngx-charts-bar-vertical>
     </div>
+  </div>
+
+  <!-- Capital Investment by Activity: Full Row -->
+  <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+    <h2 class="text-xl font-bold text-gray-700 mb-4">Capital Investment by Activity</h2>
+    <ngx-charts-bar-vertical
+      [results]="activitiesAnalytics"
+      [scheme]="colorScheme"
+      [xAxis]="true"
+      [yAxis]="true"
+      [legend]="false"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxisLabel]="'Activity'"
+      [yAxisLabel]="'Total Capital Investment'"
+      [animations]="true"
+      [view]="[900,350]">
+    </ngx-charts-bar-vertical>
+  </div>
+
+  <!-- Inline: Analytics by Business Address and Top Taxpayers -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- Analytics by Business Address (Barangay) -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-bold text-gray-700 mb-4">Business Address</h2>
+      <ngx-charts-bar-vertical
+        [results]="barangayAnalytics"
+        [scheme]="colorScheme"
+        [xAxis]="true"
+        [yAxis]="true"
+        [legend]="false"
+        [showXAxisLabel]="true"
+        [showYAxisLabel]="true"
+        [xAxisLabel]="'Barangay'"
+        [yAxisLabel]="'Count'"
+        [animations]="true"
+        [view]="[350,300]">
+      </ngx-charts-bar-vertical>
+    </div>
+
+    <!-- Top Taxpayers Table -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-bold text-gray-700 mb-4">Top Taxpayers</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-xs border border-gray-200 rounded">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="px-2 py-2 text-left font-semibold text-gray-700">Business Name</th>
+              <th class="px-2 py-2 text-left font-semibold text-gray-700">Owner</th>
+              <th class="px-2 py-2 text-right font-semibold text-gray-700">Total Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let taxpayer of topTaxpayers">
+              <td class="border-t px-2 py-1">{{ taxpayer.businessName }}</td>
+              <td class="border-t px-2 py-1">{{ taxpayer.ownerName }}</td>
+              <td class="border-t px-2 py-1 text-right">₱{{ taxpayer.totalPaid | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="bg-white p-6 rounded-lg shadow-md mt-8">
+    <h2 class="text-xl font-bold text-gray-700 mb-4">Recent Activity</h2>
+    <ul class="divide-y divide-gray-200">
+      <li *ngFor="let activity of recentActivities" class="py-2 text-sm">
+        <span class="font-semibold">{{ activity.date | date:'short' }}:</span>
+        {{ activity.description }}
+      </li>
+    </ul>
   </div>
 </div>

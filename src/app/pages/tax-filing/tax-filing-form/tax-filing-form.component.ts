@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { Firestore, collection, addDoc, doc, getDoc, updateDoc } from '@angular/fire/firestore'; // <-- Add this import
 
 interface Payment {
   name: string;
@@ -17,7 +18,6 @@ interface Payment {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterLink
   ],
   templateUrl: './tax-filing-form.component.html',
   styleUrls: ['./tax-filing-form.component.scss']
@@ -46,19 +46,46 @@ export class TaxFilingFormComponent {
 
   barangays = [
     'Agan-an', 'Agkilo', 'Agtatacay', 'Agtatac', 'Buri', 'Calawag', 'Calmay',
-    'Cangcalan', 'Dalidad', 'Guimbal', 'Igcococ', 'Jamugpong', 'Lawa-an',
-    'Pangpang', 'Poblacion', 'Quinari', 'San Enrique', 'San Isidro',
+    'Cangcalan', 'Fernando Parcon Ward, Pototan, Iloilo', 'Guimbal', 'Igcococ', 'Jamugpong', 'Lawa-an',
+    'Pangpang', 'PRINCE HYPERMART  SAN JOSE ST.  Fernando Parcon Ward, Pototan, Iloilo', 'Quinari', 'San Enrique', 'San Isidro',
     'San Jose', 'San Miguel', 'San Rafael', 'Santa Cruz', 'Santa Rosa',
     'Tabuc', 'Tagpuro', 'Tangal', 'Tigbauan', 'Tinaguiban', 'Tinaplan'
   ];
 
-  constructor(private fb: FormBuilder) {
+  @Input() filingId: string | null = null;
+  isEditMode = false;
+
+  @Output() close = new EventEmitter<void>();
+
+  constructor(private fb: FormBuilder, private firestore: Firestore) { // <-- Inject Firestore
     this.initializeForm();
     this.setupValueChanges();
     this.calculateGrandTotal();
   }
 
+  ngOnInit() {
+    if (this.filingId) {
+      // Fetch the filing data from Firestore
+      const filingRef = doc(this.firestore, 'tax_filings', this.filingId);
+      getDoc(filingRef).then(snapshot => {
+        if (snapshot.exists()) {
+          this.form.patchValue(snapshot.data());
+          // If you have FormArrays (like activities/payments), patch them as well
+        }
+      });
+      this.isEditMode = true;
+    } else {
+      this.isEditMode = false;
+    }
+  }
+
   private initializeForm() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const formattedToday = `${yyyy}-${mm}-${dd}`;
+
     this.form = this.fb.group({
       businessId: ['', Validators.required],
       topNo: [''],
@@ -67,9 +94,10 @@ export class TaxFilingFormComponent {
       ownerName: ['', Validators.required],
       numberOfEmployees: [0, [Validators.required, Validators.min(0)]],
       barangay: ['', Validators.required],
-      addressDateAssessed: ['', Validators.required],
+      addressDateAssessed: [formattedToday, Validators.required], // <-- Set to today
       taxYear: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
       contactNumber: [''],
+      status: ['Payment Sent'],
       activities: this.fb.array([
         this.createActivity('', 0, 0, 0)
       ]),
@@ -107,16 +135,24 @@ export class TaxFilingFormComponent {
     });
   }
 
-  onSubmit() {
+  async onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       alert('Please fill in all required fields correctly.');
       return;
     }
-    const formData = this.form.value;
-    console.log('Form Submitted:', formData);
-    alert('Form submitted successfully!');
-    this.printForm();
+    const formData = {
+      ...this.form.value,
+      grandTotal: this.grandTotal // <-- Save grandTotal to Firestore
+    };
+    try {
+      await addDoc(collection(this.firestore, 'tax_filings'), formData);
+      alert('Form submitted and saved successfully!');
+      this.printForm();
+      this.showModal = false;
+    } catch (error) {
+      alert('Error saving to Firestore: ' + (error as any)?.message || error);
+    }
   }
     createActivity(activityName = '', capitalInvestment = 0, essential = 0, nonEssential = 0): FormGroup {
     return this.fb.group({
@@ -159,9 +195,38 @@ printForm(): void {
   document.title = ''; // Temporarily remove title for printing
   window.print();
   document.title = originalTitle; // Restore title after printing
+  this.closeModal();
 }
 
 closeModal() {
     this.showModal = false;
+  }
+
+  formatNumber(group: FormGroup, controlName: string) {
+    let value = group.get(controlName)?.value;
+    if (value !== null && value !== undefined && value !== '') {
+      // Remove any commas before formatting
+      value = value.toString().replace(/,/g, '');
+      const num = parseFloat(value);
+      if (!isNaN(num)) {
+        group.get(controlName)?.setValue(num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }), { emitEvent: false });
+      }
+    }
+  }
+
+  removeFormat(group: FormGroup, controlName: string) {
+    let value = group.get(controlName)?.value;
+    if (typeof value === 'string') {
+      group.get(controlName)?.setValue(value.replace(/,/g, ''), { emitEvent: false });
+    }
+  }
+
+  async onUpdate() {
+    if (this.form.valid && this.filingId) {
+      const filingRef = doc(this.firestore, 'tax_filings', this.filingId);
+      this.close.emit(); // Emit the close event
+      alert('Tax filing updated successfully!');
+      this.close.emit();
+    }
   }
 }

@@ -22,6 +22,7 @@ export class AdminUsersComponent implements OnInit {
   users: any[] = [];
   editingUserId: string | null = null;
   private usersCollection;
+  showUid = true;
 
   constructor(private fb: FormBuilder, private firestore: Firestore) {
     this.usersCollection = collection(this.firestore, 'users');

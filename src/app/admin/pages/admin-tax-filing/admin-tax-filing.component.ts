@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Firestore, collection, getDocs, deleteDoc, doc, updateDoc  } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs, deleteDoc, doc, updateDoc, onSnapshot } from '@angular/fire/firestore';
 import { AuthService } from '../../../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
 import emailjs from 'emailjs-com';
@@ -18,23 +18,38 @@ export class AdminTaxFilingComponent implements OnInit {
   uid: string = 'BqQ201IVDTa8tFPqGqEi8txeUrn1';
   toast: any;
   http: any;
+  hoveredFilingId: string | null = null;
+  filingToDecline: any = null; // Track the filing to be declined
+  selectedFilingId: string | null = null;
 
   constructor(private firestore: Firestore, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.fetchAllTaxFilings();        // Admin sees all filings
+    // Realtime listener for tax filings
+    const filingsRef = collection(this.firestore, 'tax_filings');
+    onSnapshot(filingsRef, snapshot => {
+      this.taxFilings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    });
   }
   async getCurrentUserId() {
   }
   // Fetch all filings from Firestore (no UID filter for admin)
   async fetchAllTaxFilings() {
-    const filingsRef = collection(this.firestore, 'taxFilings');
+    const filingsRef = collection(this.firestore, 'tax_filings');
     const snapshot = await getDocs(filingsRef);
     this.taxFilings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
   }
 
   // Open modal for creating new tax declaration
   openModal() {
+    this.selectedFilingId = null; // For new filing
+    this.showModal = true;
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Open modal for editing existing tax declaration
+  openEditModal(filingId: string) {
+    this.selectedFilingId = filingId;
     this.showModal = true;
     document.body.style.overflow = 'hidden';
   }
@@ -42,7 +57,8 @@ export class AdminTaxFilingComponent implements OnInit {
   // Close modal
   closeModal() {
     this.showModal = false;
-    document.body.style.overflow = 'auto';
+    this.selectedFilingId = null;
+    document.body.style.overflow = '';
   }
 // Approve a specific tax filing
 async approveFiling(filingId: string) {
@@ -73,12 +89,12 @@ async approveFiling(filingId: string) {
 
   // Delete all tax filings (for admin)
   async deleteAllFilings() {
-    const filingsRef = collection(this.firestore, 'taxFilings');
+    const filingsRef = collection(this.firestore, 'tax_filings');
     const snapshot = await getDocs(filingsRef);
 
     try {
       for (const docSnapshot of snapshot.docs) {
-        const filingRef = doc(this.firestore, 'taxFilings', docSnapshot.id);
+        const filingRef = doc(this.firestore, 'tax_filings', docSnapshot.id);
         await deleteDoc(filingRef);
       }
       this.taxFilings = []; // Clear local list
@@ -100,7 +116,7 @@ async approveFiling(filingId: string) {
   // Delete a specific tax filing
   async deleteFiling(filingId: string) {
     try {
-      const filingRef = doc(this.firestore, 'taxFilings', filingId);
+      const filingRef = doc(this.firestore, 'tax_filings', filingId);
       await deleteDoc(filingRef);
       this.taxFilings = this.taxFilings.filter(filing => filing.id !== filingId);
       alert('Tax filing deleted successfully!');
@@ -117,7 +133,7 @@ async sendPayment(filing: any) {
     }
 
     // Step 1: Update status in Firestore
-    const filingRef = doc(this.firestore, 'taxFilings', filing.id);
+    const filingRef = doc(this.firestore, 'tax_filings', filing.id);
     await updateDoc(filingRef, { status: 'Payment Sent' });
 
     // Step 2: Prepare email template parameters
@@ -158,6 +174,39 @@ async sendPayment(filing: any) {
   }
 }
 
+async markAsReceived(filing: any) {
+  // Update the status in Firestore
+  const docRef = doc(this.firestore, 'tax_filings', filing.id);
+  await updateDoc(docRef, { status: 'Received' });
+  this.hoveredFilingId = null;
+  // Optionally refresh your list here
+}
 
+confirmPaymentReceived(filing: any): void {
+  // Implement the logic for confirming payment received
+  console.log('Payment received for filing:', filing);
+}
 
+confirmMarkAsReceived(filing: any) {
+  if (confirm('Are you sure you have received this payment?')) {
+    this.markAsReceived(filing);
+  }
+}
+
+get visibleTaxFilings() {
+  return this.taxFilings.filter(filing => filing.status !== 'Received');
+}
+async declineFiling(filing: any) {
+  const docRef = doc(this.firestore, 'tax_filings', filing.id);
+  await updateDoc(docRef, { status: 'Declined' });
+  // Optionally update local list or refresh data
+}
+
+// Confirm decline and update status in Firestore
+async confirmDeclineFiling() {
+  if (!this.filingToDecline) return;
+  const docRef = doc(this.firestore, 'tax_filings', this.filingToDecline.id);
+  await updateDoc(docRef, { status: 'Declined' });
+  this.filingToDecline = null;
+}
 }

@@ -1,14 +1,5 @@
 <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
-  <!-- Close Button -->
-  <button
-    type="button"
-    class="absolute top-4 right-6 z-50 bg-red-500 hover:bg-red-600 text-white rounded-full p-4 shadow-lg print-hide flex items-center justify-center"
-    (click)="closeModal()"
-    aria-label="Close"
-    style="width: 3.5rem; height: 3.5rem;"
-  >
-    <span class="text-3xl font-extrabold leading-none">&times;</span>
-  </button>
+
   <div class="bg-white w-full max-w-4xl p-6 rounded-lg shadow-xl overflow-y-auto max-h-[100vh] ">
     <!-- Header -->
     <div class="text-center border-b pb-4 ">
@@ -21,7 +12,7 @@
     <!-- Form -->
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="text-xs mt-4">
         <!-- HEADER INFORMATION -->
-        <div class="grid grid-cols-[2fr_2fr_0.5fr] text-xs border border-black">
+        <div class="grid grid-cols-[3fr_2fr_0.5fr] text-xs border border-black">
           <!-- Row 1 -->
           <!-- Column 1: Label + input inline -->
           <div class="flex items-center px-2 py-1 border-r border-black">
@@ -121,96 +112,46 @@
 
 
 
-        <!-- ACTIVITY AND INVESTMENT TABLE -->
-        <div class="mt-4 text-xs">
-          <table class="w-full border-collapse border border-black table-fixed text-left">
-            <thead>
-              <tr>
-                <!-- rowspan=2 on th is fine -->
-                <th
-                  class="border border-black px-2 py-1 text-center font-bold align-middle"
-                  rowspan="2"
-                >
-                  BUSINESS ACTIVITY
-                </th>
-                <th
-                  class="border border-black px-2 py-1 text-center font-bold align-middle"
-                  rowspan="2"
-                >
-                  Capital Investment
-                </th>
-                <th
-                  class="border border-black px-2 py-1 text-center font-bold"
-                  colspan="2"
-                >
-                  Gross Receipts
-                </th>
-              </tr>
-              <tr>
-                <th class="border border-black px-2 py-1 text-center font-bold">
-                  Essential
-                </th>
-                <th class="border border-black px-2 py-1 text-center font-bold">
-                  Non-essential
-                </th>
-              </tr>
-            </thead>
-            <tbody formArrayName="activities">
-              <tr *ngFor="let activity of activities.controls; let i = index" [formGroupName]="i">
-                <td class="border border-black px-2 py-1">
-                  <input
-                    formControlName="activityName"
-                    type="text"
-                    class="w-full text-xs focus:outline-none"
-                    [ngClass]="{'border-red-500': activity.get('activityName')?.invalid && activity.get('activityName')?.touched}"
-                  />
-                </td>
-                <td class="border border-black px-2 py-1 text-right">
-                  <input
-                    formControlName="capitalInvestment"
-                    type="number"
-                    class="w-full text-xs text-right focus:outline-none"
-                    [ngClass]="{'border-red-500': activity.get('capitalInvestment')?.invalid && activity.get('capitalInvestment')?.touched}"
-                  />
-                </td>
-                <td class="border border-black px-2 py-1 text-right">
-                  <input
-                    formControlName="grossReceiptsEssential"
-                    type="number"
-                    class="w-full text-xs text-right focus:outline-none"
-                    [ngClass]="{'border-red-500': activity.get('grossReceiptsEssential')?.invalid && activity.get('grossReceiptsEssential')?.touched}"
-                  />
-                </td>
-                <td class="border border-black px-2 py-1 text-right">
-                  <input
-                    formControlName="grossReceiptsNonEssential"
-                    type="number"
-                    class="w-full text-xs text-right focus:outline-none"
-                    [ngClass]="{'border-red-500': activity.get('grossReceiptsNonEssential')?.invalid && activity.get('grossReceiptsNonEssential')?.touched}"
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <!-- Capital Investment & Receipts Table -->
+        <table class="w-full border-collapse border border-black table-fixed text-left mt-4">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="border border-black px-2 py-1 text-center font-bold align-middle">Business Activity</th>
+              <th class="border border-black px-2 py-1 text-right font-bold align-middle">Capital Investment<br><span class="text-xs font-normal text-gray-500">(₱)</span></th>
+              <th class="border border-black px-2 py-1 text-right font-bold">Gross Receipts<br><span class="text-xs font-normal text-gray-500">Essential (₱)</span></th>
+              <th class="border border-black px-2 py-1 text-right font-bold">Gross Receipts<br><span class="text-xs font-normal text-gray-500">Non-essential (₱)</span></th>
+            </tr>
+          </thead>
+          <tbody formArrayName="activities">
+            <tr *ngFor="let activity of activities.controls; let i = index" [formGroupName]="i">
+              <td class="border border-black px-2 py-1">
+                <input formControlName="activityName" type="text" class="w-full text-xs focus:outline-none" />
+              </td>
+              <td class="border border-black px-2 py-1 text-right">
+                <input formControlName="capitalInvestment" type="number" class="w-full text-xs text-right focus:outline-none" />
+              </td>
+              <td class="border border-black px-2 py-1 text-right">
+                <input formControlName="grossReceiptsEssential" type="number" class="w-full text-xs text-right focus:outline-none" />
+              </td>
+              <td class="border border-black px-2 py-1 text-right">
+                <input formControlName="grossReceiptsNonEssential" type="number" class="w-full text-xs text-right focus:outline-none" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-
-
-
-
-          <!-- Payments Table -->
+        <!-- Payments Table -->
           <table class="w-full text-xs border-collapse border border-black mt-4">
-            <thead>
+            <thead class="bg-gray-100">
               <tr>
      <th class="border border-black px-2 py-1 w-[40%]">Particulars</th>
-                <th class="border border-black px-2 py-1">Tax Due</th>
-                <th class="border border-black px-2 py-1">Interest</th>
-                <th class="border border-black px-2 py-1">Surcharge</th>
-                <th class="border border-black px-2 py-1">Total</th>
+                <th class="border border-black px-2 py-1 text-right">Tax Due<br><span class="text-xs font-normal text-gray-500">(₱)</span></th>
+                <th class="border border-black px-2 py-1 text-right">Interest<br><span class="text-xs font-normal text-gray-500">(₱)</span></th>
+                <th class="border border-black px-2 py-1 text-right">Surcharge<br><span class="text-xs font-normal text-gray-500">(₱)</span></th>
+                <th class="border border-black px-2 py-1 text-right">Total<br><span class="text-xs font-normal text-gray-500">(₱)</span></th>
               </tr>
             </thead>
-
-    <tbody formArrayName="payments">
+            <tbody formArrayName="payments">
         <!-- Static First Row -->
       <tr>
         <td class="border border-black px-2 py-1 text-center">
@@ -234,21 +175,21 @@
       {{ payment.get('name')?.value }}
     </td>
 
-        <td class="border border-black px-2 py-1">
-          <input formControlName="taxDue" type="number" class="w-full px-1"
+        <td class="border border-black px-2 py-1 text-right">
+          <input formControlName="taxDue" type="number" class="w-full px-1 text-right"
     [ngClass]="{'border-red-500': payment.get('taxDue')?.invalid && payment.get('taxDue')?.touched}" />
         </td>
-        <td class="border border-black px-2 py-1">
-          <input formControlName="interest" type="number" class="w-full px-1"
+        <td class="border border-black px-2 py-1 text-right">
+          <input formControlName="interest" type="number" class="w-full px-1 text-right"
     [ngClass]="{'border-red-500': payment.get('interest')?.invalid && payment.get('interest')?.touched}" />
         </td>
-        <td class="border border-black px-2 py-1">
-          <input formControlName="surcharge" type="number" class="w-full px-1"
+        <td class="border border-black px-2 py-1 text-right">
+          <input formControlName="surcharge" type="number" class="w-full px-1 text-right"
     [ngClass]="{'border-red-500': payment.get('surcharge')?.invalid && payment.get('surcharge')?.touched}" />
         </td>
         <td class="border border-black px-2 py-1 text-right font-semibold">
           <!-- If first row, show nothing or a dash; else show computed total -->
-            ₱{{ getRowTotal(payment) | number: '1.2-2' }}
+            ₱ {{ getRowTotal(payment) | number:'1.2-2' }}
           <ng-template #emptyTotal>
           </ng-template>
         </td>
@@ -258,7 +199,9 @@
             <tfoot>
               <tr>
                 <td colspan="4" class="border border-black px-2 py-1 font-bold text-left">Grand Total</td>
-                <td class="border border-black px-2 py-1 font-bold text-right">₱{{ grandTotal | number:'1.2-2' }}</td>
+                <td class="border border-black px-2 py-1 font-bold text-right">
+                  <span class="whitespace-nowrap">₱ {{ grandTotal | number:'1.2-2' }}</span>
+                </td>
               </tr>
             </tfoot>
           </table>
@@ -303,9 +246,19 @@
   <div class="no-print mt-2 space-x-2">
     <!-- Show Submit button always -->
     <button
+      *ngIf="isEditMode"
+      (click)="onUpdate()"
+      type="button"
+      class="bg-green-600 rounded-lg text-white px-4 py-2"
+    >
+      Update
+    </button>
+    <button
+      *ngIf="!isEditMode"
       (click)="onSubmit()"
       type="submit"
-      class="bg-blue-500 rounded-lg text-white px-4 py-2">
+      class="bg-blue-500 rounded-lg text-white px-4 py-2"
+    >
       Submit
     </button>
   </div>

@@ -1,67 +1,56 @@
-<!-- 🔥 Sidebar Container with Responsive Toggle and HammerJS Swipe -->
-<div class="relative w-full h-full overflow-hidden">
+<!-- Mobile Navigation Toggle -->
+<button (click)="toggleMobileMenu()" class="fixed top-4 left-4 z-50 md:hidden bg-blue-700 text-white p-2 rounded-full shadow-lg" aria-label="Toggle navigation">
+  <img src="assets/images/tax.png" alt="Menu Icon" class="w-6 h-6 object-contain" />
+</button>
 
-  <!-- 📱 Mobile Toggle Button (Hamburger) -->
-  <button
-    (click)="toggleMobileMenu()"
-    class="fixed top-4 left-4 z-50 md:hidden bg-sky-300 text-white p-2 rounded-full shadow-lg"
-    aria-label="Toggle navigation"
-  >
-    <img src="assets/images/tax.png" alt="Menu Icon" class="w-6 h-6 object-contain" />
-  </button>
+<!-- Sidebar -->
+<div class="fixed left-0 top-0 h-full w-72 bg-white shadow-xl p-0 flex flex-col transition-transform duration-300 ease-in-out z-40"
+     [ngClass]="{'-translate-x-full': !mobileMenuOpen, 'translate-x-0': mobileMenuOpen, 'md:translate-x-0': true}">
 
-  <!-- 🟤 Overlay (Mobile Only) -->
-  <div
-    *ngIf="mobileMenuOpen"
-    class="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
-    (click)="toggleMobileMenu()"
-  ></div>
+  <!-- Logo and App Name -->
+  <div class="flex flex-col items-center py-8 bg-gradient-to-b from-blue-700 to-blue-500 shadow-md">
+    <img src="assets/images/tax.png" alt="TMS Logo"
+      class="w-16 h-16 object-contain rounded-full bg-white shadow-lg mb-2 border-4 border-blue-100" />
+    <h2 class="text-3xl font-black text-white drop-shadow tracking-wide">TMS</h2>
+    <span class="text-xs text-blue-100 font-semibold tracking-widest mt-1">Tax Management System</span>
+  </div>
 
-  <!-- 🧊 Sidebar Panel -->
-  <div
-    class="z-50 bg-slate-300 shadow-lg transform transition-transform duration-300 ease-in-out
-           fixed top-0 left-0 h-screen w-64 p-6 rounded-lg
-           md:sticky md:top-0 md:h-screen md:w-64 md:translate-x-0 md:shadow-none"
-    [ngClass]="{
-      '-translate-x-full': !mobileMenuOpen,
-      'translate-x-0': mobileMenuOpen
-    }"
-  >
+  <!-- Navigation Links -->
+  <nav class="flex-1 flex flex-col space-y-2 px-4 py-6 bg-white">
+    <a routerLink="/admin/dashboard"
+       routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
+       class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
+      Dashboard
+    </a>
+    <a routerLink="/admin/admin-taxfiling"
+       routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
+       class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
+      Tax Filing
+    </a>
+    <a routerLink="/admin/success"
+       routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
+       class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
+      Transactions
+    </a>
+    <a routerLink="/admin/users"
+       routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
+       class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
+      Users
+    </a>
+    <a routerLink="/admin/settings"
+       routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
+       class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
+      Settings
+    </a>
+  </nav>
 
-    <!--  Logo + App Name -->
-    <div class="flex flex-col items-center mb-6 space-y-2">
-      <img src="assets/images/tax.png" alt="PCRIM Logo"
-        class="w-12 h-12 object-contain rounded-full bg-sky-300 shadow-lg" />
-      <h2 class="text-3xl font-black text-yellow-700 drop-shadow">TMS</h2>
-    </div>
-
-    <!-- Navigation Links -->
-    <nav class="flex flex-col space-y-3 mt-4">
-      <a routerLink="/admin/dashboard"
-         routerLinkActive="bg-blue-100 font-semibold"
-         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
-        Dashboard
-      </a>
-
-      <a routerLink="/admin/admin-taxfiling"
-         routerLinkActive="bg-blue-100 font-semibold"
-         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
-        Tax Filing
-      </a>
-      <a routerLink="/admin/users"
-         routerLinkActive="bg-blue-100 font-semibold"
-         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
-        Users
-      </a>
-      <a
+  <!-- Logout Button -->
+  <div class="w-full px-4 pb-6 bg-white">
+    <button
       (click)="logout()"
-         routerLinkActive="bg-blue-100 font-semibold"
-         class="flex items-center px-4 py-3 text-white hover:bg-red-700 rounded-lg transition shadow bg-red-600">
-        Logout
-      </a>
-
-
-
-    </nav>
+      class="w-full flex items-center justify-center px-4 py-3 text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-semibold shadow"
+    >
+      Logout
+    </button>
   </div>
 </div>

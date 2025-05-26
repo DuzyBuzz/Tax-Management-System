@@ -1,0 +1,37 @@
+<div class="max-w-4xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
+  <h2 class="text-2xl font-bold mb-6 text-green-700">Successful Transactions</h2>
+  <div *ngIf="loading" class="text-center text-gray-500 py-8">Loading...</div>
+  <div *ngIf="!loading && transactions.length === 0" class="text-center text-gray-400 py-8">
+    No successful transactions found.
+  </div>
+  <div *ngIf="transactions.length > 0">
+    <button
+      (click)="printReport()"
+      class="mb-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow font-semibold print-hide"
+    >
+      Print Report
+    </button>
+    <div class="overflow-x-auto" id="print-section">
+      <table class="min-w-full bg-white border border-gray-200 rounded shadow-sm text-xs">
+        <thead class="bg-green-100">
+          <tr>
+            <th class="px-2 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Business Name</th>
+            <th class="px-2 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Full Name</th>
+            <th class="px-2 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Contact No.</th>
+            <th class="px-2 py-2 text-right font-semibold text-gray-700 whitespace-nowrap">Amount</th>
+            <th class="px-2 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tx of transactions" class="hover:bg-green-50 transition">
+            <td class="border-t px-2 py-1">{{ tx.businessName }}</td>
+            <td class="border-t px-2 py-1">{{ tx.ownerName }}</td>
+            <td class="border-t px-2 py-1">{{ tx.contactNumber }}</td>
+            <td class="border-t px-2 py-1 text-right">₱{{ tx.grandTotal | number:'1.2-2' }}</td>
+            <td class="border-t px-2 py-1">{{ tx.addressDateAssessed }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
