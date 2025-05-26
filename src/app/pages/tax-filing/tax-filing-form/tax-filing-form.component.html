@@ -71,12 +71,17 @@
           <!-- Row 3 -->
           <div class="flex items-center px-2 py-1 border-t border-r border-black">
             <strong class="mr-1 whitespace-nowrap">Address:</strong>
-            <select formControlName="barangay"
-          class="w-full border-b border-black focus:outline-none bg-white"
-          [ngClass]="{'border-red-500': form.get('barangay')?.invalid && form.get('barangay')?.touched}">
-              <option value="" disabled>Select a barangay</option>
-              <option *ngFor="let brgy of barangays" [value]="brgy">{{ brgy }}</option>
-            </select>
+            <select
+  formControlName="barangay"
+  class="w-full border-b border-black focus:outline-none bg-white"
+>
+  <option value="" disabled selected>
+    {{ form.get('barangay')?.value ? form.get('barangay')?.value : 'Select a barangay' }}
+  </option>
+  <option *ngFor="let brgy of barangays" [value]="brgy">
+    {{ brgy }}
+  </option>
+</select>
           </div>
 
           <div class="px-2 py-1 border-t border-r border-black">

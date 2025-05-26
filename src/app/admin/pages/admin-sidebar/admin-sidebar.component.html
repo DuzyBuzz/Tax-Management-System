@@ -3,6 +3,13 @@
   <img src="assets/images/tax.png" alt="Menu Icon" class="w-6 h-6 object-contain" />
 </button>
 
+<!-- Overlay for mobile, click to close -->
+<div
+  *ngIf="mobileMenuOpen"
+  class="fixed inset-0 bg-black bg-opacity-40 z-30 md:hidden"
+  (click)="toggleMobileMenu()"
+></div>
+
 <!-- Sidebar -->
 <div class="fixed left-0 top-0 h-full w-72 bg-white shadow-xl p-0 flex flex-col transition-transform duration-300 ease-in-out z-40"
      [ngClass]="{'-translate-x-full': !mobileMenuOpen, 'translate-x-0': mobileMenuOpen, 'md:translate-x-0': true}">
@@ -37,15 +44,16 @@
        class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
       Users
     </a>
-    <a routerLink="/admin/settings"
-       routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
-       class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg transition">
-      Settings
-    </a>
   </nav>
 
   <!-- Logout Button -->
-  <div class="w-full px-4 pb-6 bg-white">
+  <div class="w-full  px-4 pb-6 bg-white">
+    <button
+      routerLink="/admin/settings"
+      class="w-full flex items-center mb-2 justify-center px-4 py-3 text-white bg-gray-600 hover:bg-gray-700 rounded-lg transition font-semibold shadow"
+    >
+      Settings
+    </button>
     <button
       (click)="logout()"
       class="w-full flex items-center justify-center px-4 py-3 text-white bg-red-600 hover:bg-red-700 rounded-lg transition font-semibold shadow"

@@ -60,6 +60,7 @@ export class AdminDashboardComponent implements OnInit {
 
     if (snapshot.empty) {
       this.filingsOverTime = [];
+      this.barangayAnalytics = [];
       return;
     }
 
@@ -184,9 +185,12 @@ this.taxFilingStatus = [
         value: filingsByMonth[month]
       }));
 
+    // Compute barangay analytics (fix: call after fetching filings)
+    this.computeBarangayAnalytics(filings);
+
     // After fetching filings in fetchTaxFilings()
     const uniqueBarangays = new Set(filings.map(f => f['barangay']).filter(b => !!b));
-this.totalUniqueBarangays = uniqueBarangays.size;
+    this.totalUniqueBarangays = uniqueBarangays.size;
   }
 
   // Helper function to count filings by their status
@@ -248,7 +252,7 @@ this.totalUniqueBarangays = uniqueBarangays.size;
   computeBarangayAnalytics(filings: any[]) {
     const barangayMap: { [key: string]: number } = {};
     filings.forEach(f => {
-      const barangay = f.barangay || 'Unknown';
+      const barangay = f['barangay'] || 'Unknown';
       barangayMap[barangay] = (barangayMap[barangay] || 0) + 1;
     });
     this.barangayAnalytics = Object.keys(barangayMap).map(name => ({

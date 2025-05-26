@@ -65,12 +65,45 @@ export class TaxFilingFormComponent {
 
   ngOnInit() {
     if (this.filingId) {
-      // Fetch the filing data from Firestore
       const filingRef = doc(this.firestore, 'tax_filings', this.filingId);
       getDoc(filingRef).then(snapshot => {
         if (snapshot.exists()) {
-          this.form.patchValue(snapshot.data());
-          // If you have FormArrays (like activities/payments), patch them as well
+          const data = snapshot.data();
+
+          // Log the fetched barangay to the console
+          console.log('Fetched barangay:', data['barangay']);
+
+          // Patch main form fields
+          this.form.patchValue(data);
+
+          // Patch activities FormArray
+          if (data['activities'] && Array.isArray(data['activities'])) {
+            this.activities.clear();
+            data['activities'].forEach((act: any) => {
+              this.activities.push(this.createActivity(
+                act.activityName,
+                act.capitalInvestment,
+                act.grossReceiptsEssential,
+                act.grossReceiptsNonEssential
+              ));
+            });
+          }
+
+          // Patch payments FormArray
+          if (data['payments'] && Array.isArray(data['payments'])) {
+            this.payments.clear();
+            data['payments'].forEach((pay: any) => {
+              this.payments.push(this.fb.group({
+                name: [pay.name],
+                taxDue: [pay.taxDue, [Validators.required, Validators.min(0)]],
+                interest: [pay.interest, [Validators.required, Validators.min(0)]],
+                surcharge: [pay.surcharge, [Validators.required, Validators.min(0)]],
+              }));
+            });
+          }
+
+          // Patch barangay after fetching
+          this.form.patchValue({ barangay: data['barangay'] || '' });
         }
       });
       this.isEditMode = true;
@@ -224,9 +257,16 @@ closeModal() {
   async onUpdate() {
     if (this.form.valid && this.filingId) {
       const filingRef = doc(this.firestore, 'tax_filings', this.filingId);
-      this.close.emit(); // Emit the close event
-      alert('Tax filing updated successfully!');
-      this.close.emit();
+      try {
+        await updateDoc(filingRef, {
+          ...this.form.value,
+          grandTotal: this.grandTotal
+        });
+        alert('Tax filing updated successfully!');
+        this.close.emit();
+      } catch (error) {
+        alert('Error updating tax filing: ' + (error as any)?.message || error);
+      }
     }
   }
 }
