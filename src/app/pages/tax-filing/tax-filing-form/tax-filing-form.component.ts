@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 interface Payment {
   name: string;
@@ -15,17 +16,20 @@ interface Payment {
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterLink
   ],
   templateUrl: './tax-filing-form.component.html',
   styleUrls: ['./tax-filing-form.component.scss']
 })
 export class TaxFilingFormComponent {
   form!: FormGroup;
-dueDate = new Date(new Date().getFullYear(), 11, 31);
+  dueDate = new Date(new Date().getFullYear(), 11, 31);
 
   grandTotal = 0;
   paymentStatus = 'Unpaid';
+
+  showModal = true; // Add this property
 
   paymentItems: Payment[] = [
     { name: 'BARANGAY CLEARANCE FEE-MALUSGOD (NEW MARKET)', taxDue: 200, interest: 0, surcharge: 0 },
@@ -112,6 +116,7 @@ dueDate = new Date(new Date().getFullYear(), 11, 31);
     const formData = this.form.value;
     console.log('Form Submitted:', formData);
     alert('Form submitted successfully!');
+    this.printForm();
   }
     createActivity(activityName = '', capitalInvestment = 0, essential = 0, nonEssential = 0): FormGroup {
     return this.fb.group({
@@ -150,8 +155,13 @@ dueDate = new Date(new Date().getFullYear(), 11, 31);
   }
 // Add this method to enable printing the form
 printForm(): void {
-  document.title = ''; // Remove title temporarily
+  const originalTitle = document.title;
+  document.title = ''; // Temporarily remove title for printing
   window.print();
+  document.title = originalTitle; // Restore title after printing
 }
 
+closeModal() {
+    this.showModal = false;
+  }
 }

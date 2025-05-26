@@ -1,7 +1,17 @@
-<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white w-full max-w-4xl p-6 rounded-lg shadow-xl overflow-y-auto max-h-[90vh]">
+<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ">
+  <!-- Close Button -->
+  <button
+    type="button"
+    class="absolute top-4 right-6 z-50 bg-red-500 hover:bg-red-600 text-white rounded-full p-4 shadow-lg print-hide flex items-center justify-center"
+    (click)="closeModal()"
+    aria-label="Close"
+    style="width: 3.5rem; height: 3.5rem;"
+  >
+    <span class="text-3xl font-extrabold leading-none">&times;</span>
+  </button>
+  <div class="bg-white w-full max-w-4xl p-6 rounded-lg shadow-xl overflow-y-auto max-h-[100vh] ">
     <!-- Header -->
-    <div class="text-center border-b pb-4">
+    <div class="text-center border-b pb-4 ">
       <h2 class="text-md font-semibold uppercase">Province of Iloilo</h2>
       <h3 class="text-sm">Municipality of Pototan</h3>
       <h1 class="text-lg font-semibold mt-1">Business Permit and Licensing Office</h1>
@@ -288,13 +298,18 @@
       <li>For due dates which fall on Saturdays, Sundays, and Holidays shall be paid on the last working day prior to the due date.</li>
     </ul>
   <!-- Buttons go OUTSIDE the print-section but INSIDE the form -->
-  <div class="mt-6 flex justify-end gap-2 print-hide">
-<!-- Buttons to hide when printing -->
-<div class="no-print mt-2 space-x-2">
-  <button (click)="printForm()" class="bg-green-500 rounded-lg text-white px-4 py-2">Print</button>
-  <button  type="submit" class="bg-blue-500 rounded-lg text-white px-4 py-2">Submit</button>
+<div class="mt-6 flex justify-end gap-2 no-print">
+  <!-- Buttons to hide when printing -->
+  <div class="no-print mt-2 space-x-2">
+    <!-- Show Submit button always -->
+    <button
+      (click)="onSubmit()"
+      type="submit"
+      class="bg-blue-500 rounded-lg text-white px-4 py-2">
+      Submit
+    </button>
+  </div>
 </div>
 
-  </div>
 </form>
 </div>
