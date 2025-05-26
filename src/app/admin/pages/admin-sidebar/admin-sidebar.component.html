@@ -1,11 +1,67 @@
-<div class="h-screen w-64 bg-blue-800 text-white p-5 flex flex-col">
-  <h2 class="text-2xl font-bold mb-6">Admin Panel</h2>
+<!-- 🔥 Sidebar Container with Responsive Toggle and HammerJS Swipe -->
+<div class="relative w-full h-full overflow-hidden">
 
-  <nav class="flex flex-col space-y-4 cursor-pointer">
-    <a routerLink="/admin/dashboard" class="p-3 rounded hover:bg-blue-700">Dashboard</a>
-    <a routerLink="/admin/admin-taxfiling" class="p-3 rounded hover:bg-blue-700">Tax Filings</a>
-    <a routerLink="/admin/users" class="p-3 rounded hover:bg-blue-700">Users</a>
-    <a routerLink="/admin/message" class="p-3 rounded hover:bg-blue-700">Messages</a>
-    <a routerLink="/auth/login" (click)="logout()" class="p-3 rounded bg-red-600 hover:bg-red-700 mt-auto">Logout</a>
-  </nav>
+  <!-- 📱 Mobile Toggle Button (Hamburger) -->
+  <button
+    (click)="toggleMobileMenu()"
+    class="fixed top-4 left-4 z-50 md:hidden bg-sky-300 text-white p-2 rounded-full shadow-lg"
+    aria-label="Toggle navigation"
+  >
+    <img src="assets/images/tax.png" alt="Menu Icon" class="w-6 h-6 object-contain" />
+  </button>
+
+  <!-- 🟤 Overlay (Mobile Only) -->
+  <div
+    *ngIf="mobileMenuOpen"
+    class="fixed inset-0 bg-black bg-opacity-40 z-40 md:hidden"
+    (click)="toggleMobileMenu()"
+  ></div>
+
+  <!-- 🧊 Sidebar Panel -->
+  <div
+    class="z-50 bg-slate-300 shadow-lg transform transition-transform duration-300 ease-in-out
+           fixed top-0 left-0 h-screen w-64 p-6 rounded-lg
+           md:sticky md:top-0 md:h-screen md:w-64 md:translate-x-0 md:shadow-none"
+    [ngClass]="{
+      '-translate-x-full': !mobileMenuOpen,
+      'translate-x-0': mobileMenuOpen
+    }"
+  >
+
+    <!--  Logo + App Name -->
+    <div class="flex flex-col items-center mb-6 space-y-2">
+      <img src="assets/images/tax.png" alt="PCRIM Logo"
+        class="w-12 h-12 object-contain rounded-full bg-sky-300 shadow-lg" />
+      <h2 class="text-3xl font-black text-yellow-700 drop-shadow">TMS</h2>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex flex-col space-y-3 mt-4">
+      <a routerLink="/admin/dashboard"
+         routerLinkActive="bg-blue-100 font-semibold"
+         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
+        Dashboard
+      </a>
+
+      <a routerLink="/admin/admin-taxfiling"
+         routerLinkActive="bg-blue-100 font-semibold"
+         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
+        Tax Filing
+      </a>
+      <a routerLink="/admin/users"
+         routerLinkActive="bg-blue-100 font-semibold"
+         class="flex items-center px-4 py-3 text-gray-700 hover:bg-blue-100 rounded-lg transition shadow">
+        Users
+      </a>
+      <a
+      (click)="logout()"
+         routerLinkActive="bg-blue-100 font-semibold"
+         class="flex items-center px-4 py-3 text-white hover:bg-red-700 rounded-lg transition shadow bg-red-600">
+        Logout
+      </a>
+
+
+
+    </nav>
+  </div>
 </div>

@@ -1,37 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { addDoc, collection, doc, Firestore, getDoc } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Firestore, collection, addDoc } from '@angular/fire/firestore'; // Modular Firestore import
 
-import { BusinessAddressMapComponent } from '../../../shared/core/business-address-map/business-address-map.component';
-import { SpinnnerComponent } from '../../../shared/core/spinner/spinner.component';
-
-interface TaxFilingForm {
-  businessId: string;
-  businessName: string;
-  businessAddress: string;
-  fullName: string;
-  contactNumber: string;
-  email: string;
-  forYear: number;
-  lineOfBusinessCode: string;
-  lineOfBusiness: string;
-  monthlyGrossSales?: string;
-  periodCovered?: string;
-  plateNo: string;
-  permitNo: string;
-  dateIssued?: string;
-  dateRegistered?: string;
-  typeOfBusiness: string;
-  noOfEmployees: number | null;
-  deadline?: string;
-  tinNumber?: string;
-  natureOfBusiness?: string;
-  mayorsPermitNo?: string;
-  registrationNo?: string;
-  registrationDate?: string;
-  status: 'Pending' | 'Sent' | 'Approved';
+interface Payment {
+  name: string;
+  taxDue: number | string;
+  interest: number | string;
+  surcharge: number | string;
 }
 
 @Component({
@@ -40,109 +16,145 @@ interface TaxFilingForm {
   imports: [
     CommonModule,
     FormsModule,
-    BusinessAddressMapComponent,
-    SpinnnerComponent
+    ReactiveFormsModule
   ],
   templateUrl: './tax-filing-form.component.html',
   styleUrls: ['./tax-filing-form.component.scss']
 })
-export class TaxFilingFormComponent implements OnInit {
-  @Input() uid: string | null = null;
+export class TaxFilingFormComponent {
+  form!: FormGroup;
+  dueDate = new Date('2025-12-31');
+  grandTotal = 0;
+  paymentStatus = 'Unpaid';
 
-  showMapModal = false;
-  navigating = false;
-  spinnerMessage = 'Saving your data, please wait...';
+  paymentItems: Payment[] = [
+    { name: 'Due and Payable to the Municipality of Pototan', taxDue: '', interest: '', surcharge: '' },
+    { name: 'BARANGAY CLEARANCE FEE-MALUSGOD (NEW MARKET)', taxDue: 200, interest: 0, surcharge: 0 },
+    { name: 'Occupation Fee', taxDue: 200, interest: 0, surcharge: 0 },
+    { name: 'Solid Waste', taxDue: 240, interest: 0, surcharge: 0 },
+    { name: 'Fire Inspection Fee', taxDue: 50, interest: 0, surcharge: 0 },
+    { name: 'Sanitary', taxDue: 500, interest: 0, surcharge: 0 },
+    { name: 'Business Sticker', taxDue: 75, interest: 0, surcharge: 0 },
+    { name: 'Business Plate', taxDue: 200, interest: 0, surcharge: 0 },
+    { name: 'Garbage Fee', taxDue: 500, interest: 0, surcharge: 0 },
+    { name: 'Zoning', taxDue: 216, interest: 0, surcharge: 0 },
+    { name: 'Mayors Permit', taxDue: 300, interest: 0, surcharge: 0 },
+  ];
 
-  form: TaxFilingForm = {
-    businessId: '',
-    businessName: '',
-    businessAddress: '',
-    fullName: '',
-    contactNumber: '',
-    email: '',
-    forYear: 2025,
-    lineOfBusinessCode: '',
-    lineOfBusiness: '',
-    monthlyGrossSales: '',
-    periodCovered: '',
-    plateNo: '',
-    permitNo: '',
-    dateIssued: '',
-    dateRegistered: '',
-    typeOfBusiness: '',
-    noOfEmployees: null,
-    deadline: '',
-    tinNumber: '',
-    natureOfBusiness: '',
-    mayorsPermitNo: '',
-    registrationNo: '',
-    registrationDate: '',
-    status: 'Pending'
-  };
+  barangays = [
+    'Agan-an', 'Agkilo', 'Agtatacay', 'Agtatac', 'Buri', 'Calawag', 'Calmay',
+    'Cangcalan', 'Dalidad', 'Guimbal', 'Igcococ', 'Jamugpong', 'Lawa-an',
+    'Pangpang', 'Poblacion', 'Quinari', 'San Enrique', 'San Isidro',
+    'San Jose', 'San Miguel', 'San Rafael', 'Santa Cruz', 'Santa Rosa',
+    'Tabuc', 'Tagpuro', 'Tangal', 'Tigbauan', 'Tinaguiban', 'Tinaplan'
+  ];
 
-  constructor(
-    private firestore: Firestore,
-    private router: Router
-  ) {}
+  constructor(private fb: FormBuilder, private firestore: Firestore) { // Use modular Firestore
+    this.initializeForm();
+    this.setupValueChanges();
+    this.calculateGrandTotal();
+  }
 
-  async ngOnInit() {
-    if (!this.uid) {
-      console.error('UID is missing');
+  private initializeForm() {
+    this.form = this.fb.group({
+      businessId: ['', Validators.required],
+      topNo: [''],
+      typeOfApplication: ['New', Validators.required],
+      businessName: ['', Validators.required],
+      ownerName: ['', Validators.required],
+      numberOfEmployees: [0, [Validators.required, Validators.min(0)]],
+      barangay: ['', Validators.required],
+      addressDateAssessed: ['', Validators.required],
+      taxYear: [new Date().getFullYear(), [Validators.required, Validators.min(1900), Validators.max(2100)]],
+      contactNumber: [''],
+      activities: this.fb.array([
+        this.createActivity('', 0, 0, 0)
+      ]),
+      payments: this.fb.array(this.paymentItems.map(payment => this.fb.group({
+        name: [payment.name],
+        taxDue: [payment.taxDue, [Validators.required, Validators.min(0)]],
+        interest: [payment.interest, [Validators.required, Validators.min(0)]],
+        surcharge: [payment.surcharge, [Validators.required, Validators.min(0)]],
+      })))
+    });
+  }
+
+  get payments() {
+    return this.form.get('payments') as FormArray;
+  }
+
+  // Accept any type for paymentGroup to avoid template typing issues
+  getRowTotal(paymentGroup: any): number {
+    const taxDue = Number(paymentGroup.get('taxDue')?.value) || 0;
+    const interest = Number(paymentGroup.get('interest')?.value) || 0;
+    const surcharge = Number(paymentGroup.get('surcharge')?.value) || 0;
+    return taxDue + interest + surcharge;
+  }
+
+  private calculateGrandTotal() {
+    this.grandTotal = this.payments.controls.reduce((total, group) => {
+      return total + this.getRowTotal(group);
+    }, 0);
+  }
+
+  private setupValueChanges() {
+    // Subscribe to the entire payments FormArray value changes
+    this.payments.valueChanges.subscribe(() => {
+      this.calculateGrandTotal();
+    });
+  }
+
+  async onSubmit() {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      alert('Please fill in all required fields correctly.');
       return;
     }
-
+    const formData = this.form.value;
     try {
-      const userDocRef = doc(this.firestore, `users/${this.uid}`);
-      const userSnap = await getDoc(userDocRef);
-
-      if (userSnap.exists()) {
-        const userData: any = userSnap.data();
-        this.form.fullName = userData.fullName || '';
-        this.form.contactNumber = userData.contactNumber || '';
-        this.form.email = userData.email || '';
-      } else {
-        console.warn('User document not found for UID:', this.uid);
-      }
+      const colRef = collection(this.firestore, 'tax_filings');
+      await addDoc(colRef, formData);
+      alert('Form submitted and saved successfully!');
+      this.form.reset(); // Optionally reset the form
     } catch (error) {
-      console.error('Error fetching user data:', error);
+      alert('Error saving to Firestore: ' + error);
     }
   }
-
-  openMapModal() {
-    this.showMapModal = true;
+    createActivity(activityName = '', capitalInvestment = 0, essential = 0, nonEssential = 0): FormGroup {
+    return this.fb.group({
+      activityName: [activityName, Validators.required],
+      capitalInvestment: [capitalInvestment, [Validators.required, Validators.min(0)]],
+      grossReceiptsEssential: [essential, [Validators.required, Validators.min(0)]],
+      grossReceiptsNonEssential: [nonEssential, [Validators.required, Validators.min(0)]],
+    });
   }
 
-  closeMapModal() {
-    this.showMapModal = false;
+  get activities(): FormArray {
+    return this.form.get('activities') as FormArray;
   }
 
-  setAddress(address: string) {
-    this.form.businessAddress = address;
-    this.closeMapModal();
+  addActivity() {
+    this.activities.push(this.createActivity());
   }
 
-  async submitForm() {
-    if (!this.uid) {
-      console.error('UID is missing');
-      return;
-    }
-
-    this.navigating = true;
-
-    const taxFilingData = {
-      ...this.form,
-      userUid: this.uid
-    };
-
-    try {
-      await addDoc(collection(this.firestore, 'taxFilings'), taxFilingData);
-      console.log('✅ Tax filing document created');
-
-      this.router.navigate(['/taxpayer']);
-    } catch (error) {
-      console.error('❌ Error adding tax filing:', error);
-    } finally {
-      this.navigating = false;
-    }
+  removeActivity(index: number) {
+    this.activities.removeAt(index);
   }
+
+  // Calculate total capital investment
+  get totalCapitalInvestment(): number {
+    return this.activities.controls.reduce((sum, group) => sum + Number(group.get('capitalInvestment')?.value || 0), 0);
+  }
+
+  // Calculate total gross receipts essential
+  get totalGrossReceiptsEssential(): number {
+    return this.activities.controls.reduce((sum, group) => sum + Number(group.get('grossReceiptsEssential')?.value || 0), 0);
+  }
+
+  // Calculate total gross receipts non-essential
+  get totalGrossReceiptsNonEssential(): number {
+    return this.activities.controls.reduce((sum, group) => sum + Number(group.get('grossReceiptsNonEssential')?.value || 0), 0);
+  }
+
+
 }

@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-sidebar',
-  imports: [RouterLink],
+  imports: [RouterLink, CommonModule],
   templateUrl: './admin-sidebar.component.html',
   styleUrl: './admin-sidebar.component.scss'
 })
@@ -13,5 +14,10 @@ export class AdminSidebarComponent {
 
   logout() {
     this.authService.logout();
+  }
+    mobileMenuOpen = false;
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
   }
 }

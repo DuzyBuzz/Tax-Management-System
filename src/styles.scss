@@ -83,3 +83,18 @@
 .font-semibold {
   font-weight: 600;
 }
+/* Hide spinner by default, show on hover */
+.hide-spinner-on-hover::-webkit-inner-spin-button,
+.hide-spinner-on-hover::-webkit-outer-spin-button {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.hide-spinner-on-hover:hover::-webkit-inner-spin-button,
+.hide-spinner-on-hover:hover::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+.border-thick {
+  border-width: 2px !important;
+}
